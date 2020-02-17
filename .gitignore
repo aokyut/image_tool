@@ -1,0 +1,10 @@
+dataset/*
+modules/*
+image_crawler/modules
+image_crawler/datasets
+image_crawler/chromedriver
+image_crawler/csv_folder
+image_crawler/anime_eye_cascade
+*/__pycache__
+*.log
+image_crawler/chrome_crawl.py
