@@ -9,11 +9,14 @@ class Espcn(nn.Module):
         self.upscale = upscale
         self.module_list = nn.ModuleList([nn.Conv2d(in_ch, 64, kernel_size=5, stride=1, padding=2),
                                           nn.ReLU(),
+                                          nn.BatchNorm2d(64),
                                           nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
                                           nn.ReLU(),
+                                          nn.BatchNorm2d(64),
                                           nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
                                           nn.ReLU(),
-                                          nn.Conv2d(32, upscale**2, kernerl_size=3, stride=1, padding=1),
+                                          nn.BatchNorm2d(32),
+                                          nn.Conv2d(32, 3*(upscale**2), kernel_size=3, stride=1, padding=1),
                                           nn.PixelShuffle(upscale),
                                           ])
         

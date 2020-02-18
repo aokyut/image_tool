@@ -8,3 +8,5 @@ image_crawler/anime_eye_cascade
 */__pycache__
 *.log
 image_crawler/chrome_crawl.py
+checkpoints/*
+tensorboard/*

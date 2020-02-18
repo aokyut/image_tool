@@ -35,7 +35,7 @@ def image_super_resolution(data_loader, model, output_dir, device):
         pred_y = net(xx)
     
         output_filename = GetRandomStr(10)+".jpg"
-        save_image(torch.cat([yy, bl_recon, pred_y], 0),os.path.join(output_dir, output_filename) )
+        save_image(torch.cat([yy, bl_recon, pred_y], 0),os.path.join(output_dir, output_filename))
 
 if __name__ == "__main__":
     data_folder = Pairimagefolder(input_dir, transform=transforms.ToTensor())
