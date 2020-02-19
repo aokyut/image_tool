@@ -2,7 +2,7 @@ import sys
 sys.path.append("../modules")
 import torch
 from networks import Espcn
-from utils import SetImageDataset
+from utils import SetImageDataset, raplacian_loss
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -109,7 +109,11 @@ if __name__ == "__main__":
                 y_pred = net(xx)
 
                 # learning process
-                loss = loss_fn(y_pred, yy)
+                mse_loss = loss_fn(y_pred, yy)
+                rap_loss = raplacian_loss(y_pred, yy)
+
+                loss = mse_loss + rap_loss
+
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
@@ -117,19 +121,38 @@ if __name__ == "__main__":
                 t.set_postfix(loss=running_loss.mean())
                 t.update()
 
+                # -----test process-----
                 if step % opt.n_record_iter == 0:
                     net.eval()
                     test_loss_list = []
+                    test_mse_loss_list = []
+                    test_rap_loss_list = []
                     for xx,yy in test_loader:
                         xx = xx.to(device)
                         yy = yy.to(device)
 
                         y_pred = net(xx)
-                        test_loss_list.append(loss_fn(y_pred, yy).item())
-                    test_loss = sum(test_loss_list)/len(test_loss_list)
 
-                    train_writer.add_scalar("mseloss", loss.item(), step)
-                    test_writer.add_scalar("mseloss", test_loss, step)
+                        test_mse_loss = loss_fn(y_pred, yy)
+                        test_rap_loss = raplacian_loss(y_pred, yy)
+                        test_loss = test_mse_loss + test_rap_loss
+
+                        test_loss_list.append(test_loss.item())
+                        test_mse_loss_list.append(test_mse_loss.item())
+                        test_rap_loss_list.append(test_rap_loss.item())
+
+                    # -----record process-----
+
+                    test_loss = sum(test_loss_list)/len(test_loss_list)
+                    test_mse_loss = sum(test_mse_loss_list)/len(test_mse_loss_list)
+                    test_rap_loss = sum(test_rap_loss_list)/len(test_rap_loss_list)
+
+                    train_writer.add_scalar("loss/loss", loss.item(), step)
+                    train_writer.add_scalar("loss/mse_loss", mse_loss.item(), step)
+                    train_writer.add_scalar("loss/raplacian_loss", rap_loss.item(), step)
+                    test_writer.add_scalar("loss/loss", test_loss, step)
+                    test_writer.add_scalar("loss/mse_loss", test_mse_loss, step)
+                    test_writer.add_scalar("loss/raplacian_loss", test_rap_loss, step)
 
                     net.train()
                 if step % opt.n_save_model == 0:
