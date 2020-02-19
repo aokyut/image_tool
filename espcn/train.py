@@ -118,7 +118,7 @@ if __name__ == "__main__":
                 loss.backward()
                 optimizer.step()
                 running_loss = np.hstack((running_loss,loss.item()))[-10:]
-                t.set_postfix(loss=running_loss.mean())
+                t.set_postfix(loss=running_loss.mean(), iter=i+1)
                 t.update()
 
                 # -----test process-----
