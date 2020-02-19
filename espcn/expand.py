@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     # -----Net Work setting-----
     net = Espcn(upscale=opt.upscale)
-    net.load_state_dict(torch.load(opt.model_path))
+    net.load_state_dict(torch.load(opt.model_path, map_location="cpu"))
     net.to(device)
     net.eval()
     print("small_pix :", opt.small_pix)
