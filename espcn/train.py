@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
                 # learning process
                 mse_loss = loss_fn(y_pred, yy)
-                rap_loss = raplacian_loss(y_pred, yy)
+                rap_loss = raplacian_loss(y_pred, yy, device)
 
                 loss = mse_loss + rap_loss
 
@@ -134,7 +134,7 @@ if __name__ == "__main__":
                         y_pred = net(xx)
 
                         test_mse_loss = loss_fn(y_pred, yy)
-                        test_rap_loss = raplacian_loss(y_pred, yy)
+                        test_rap_loss = raplacian_loss(y_pred, yy, device)
                         test_loss = test_mse_loss + test_rap_loss
 
                         test_loss_list.append(test_loss.item())

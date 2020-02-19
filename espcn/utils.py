@@ -16,14 +16,14 @@ def GetRandomStr(num):
     # 英数字からランダムに取得
     return ''.join([random.choice(dat) for i in range(num)])
 
-def raplacian_loss(output, target):
-    return F.relu(get_raplacian(target) - get_raplacian(output))
+def raplacian_loss(output, target, device):
+    return F.relu(get_raplacian(target, device) - get_raplacian(output, device))
 
-def get_raplacian(image): # image tensor
+def get_raplacian(image, device): # image tensor
     rap_kernel = torch.Tensor([[1, 1, 1],
                                [1, -8, 1],
                                [1, 1, 1]])
-    weight = rap_kernel.view(1, 1, 3, 3)
+    weight = rap_kernel.view(1, 1, 3, 3).to(device)
     # rgb to gray scale
     gray_image = 0.299 * image[: ,0, :, :] + 0.587 * image[:, 1, :, :] + 0.114 * image[:, 2, :, :]
     gray_image = gray_image.unsqueeze(1)
