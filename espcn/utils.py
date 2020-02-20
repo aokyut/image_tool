@@ -53,7 +53,7 @@ class SetImageDataset(Dataset):
     
     def __getitem__(self,index):
         image_path = os.path.join(self.image_dir, self.image_names[index])
-        src_image = Image.open(image_name)
+        src_image = Image.open(image_path)
 
         if self.preprocess is not None:
             src_image = self.preprocess(src_image)
