@@ -49,8 +49,8 @@ if __name__ == "__main__":
                                  datamode="train",
                                  smaller_pix=opt.small_pix,
                                  preprocess=transforms.Compose([
-                                     transforms.RandomHorizontalFlip,
-                                     Verticalrotation
+                                     transforms.RandomHorizontalFlip(),
+                                     Verticalrotation()
                                  ]),
                                  transform=transforms.ToTensor(),
                                  upscale=opt.upscale)
