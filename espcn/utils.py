@@ -19,8 +19,6 @@ def GetRandomStr(num):
 def raplacian_loss(output, target, device):
     target_sharpness = get_raplacian(target, device)
     output_sharpness = get_raplacian(target, device)
-    print("target", target_sharpness)
-    print("output", output_sharpness)
     return F.relu(target_sharpness - output_sharpness)
 
 def get_raplacian(image, device): # image tensor
