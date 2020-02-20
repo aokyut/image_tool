@@ -18,6 +18,7 @@ parser.add_argument("--exper_name", type=str, default="espcn")
 parser.add_argument("--record_dir", type=str, default="../tensorboard")
 
 #resume
+parser.add_argument("--load_dir", type=str, default="../checkpoint")
 parser.add_argument("--resume_step", type=int, default=0)
 
 parser.add_argument("--gpu", action="store_true", default=False)
@@ -80,7 +81,7 @@ if __name__ == "__main__":
     net = Espcn(upscale=opt.upscale)
 
     if opt.resume_step != 0:
-        load_model_path = os.path.join(opt.checkpoints_dir, opt.exper_name, "model_{}.pth".format(opt.resume_step))
+        load_model_path = os.path.join(opt.load_dir, "model_{}.pth".format(opt.resume_step))
         if os.path.exists(load_model_path):
             net.load_state_dict(torch.load(load_model_path))
             print("resume from {}".format(opt.resume_step))
