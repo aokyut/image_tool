@@ -7,13 +7,10 @@ class Espcn(nn.Module):
     def __init__(self, upscale=2, in_ch=3):
         super().__init__()
         self.upscale = upscale
-        self.module_list = nn.ModuleList([nn.Conv2d(in_ch, 64, kernel_size=5, stride=1, padding=2),
+        self.module_list = nn.ModuleList([nn.Conv2d(in_ch, 32, kernel_size=5, stride=1, padding=2),
                                           nn.LeakyReLU(),
                                           nn.BatchNorm2d(64),
-                                          nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
-                                          nn.LeakyReLU(),
-                                          nn.BatchNorm2d(128),
-                                          nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+                                          nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
                                           nn.LeakyReLU(),
                                           nn.BatchNorm2d(64),
                                           nn.Conv2d(64, 32, kernel_size=5, stride=1, padding=2),

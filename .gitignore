@@ -10,3 +10,4 @@ image_crawler/anime_eye_cascade
 image_crawler/chrome_crawl.py
 checkpoints/*
 tensorboard/*
+espcn/results

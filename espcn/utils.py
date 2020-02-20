@@ -17,7 +17,11 @@ def GetRandomStr(num):
     return ''.join([random.choice(dat) for i in range(num)])
 
 def raplacian_loss(output, target, device):
-    return F.relu(get_raplacian(target, device) - get_raplacian(output, device))
+    target_sharpness = get_raplacian(target, device)
+    output_sharpness = get_raplacian(target, device)
+    print("target", target_sharpness)
+    print("output", output_sharpness)
+    return F.relu(target_sharpness - output_sharpness)
 
 def get_raplacian(image, device): # image tensor
     rap_kernel = torch.Tensor([[1, 1, 1],
@@ -31,11 +35,12 @@ def get_raplacian(image, device): # image tensor
     return raplacian_mean
 
 class SetImageDataset(Dataset):
-    def __init__(self, root, transform=None, smaller_pix=64, upscale=2, datamode="train"):
+    def __init__(self, root, preprocess=None, transform=None, smaller_pix=64, upscale=2, datamode="train"):
         super().__init__()
-        self.transform = transform
         self.small_resizer = transforms.Resize(smaller_pix)
         self.large_resizer = transforms.Resize(smaller_pix * upscale)
+        self.transfrom = transform
+        self.preprocess = preprocess
         if datamode == "val":
             self.image_dir = root
         else:
@@ -47,12 +52,36 @@ class SetImageDataset(Dataset):
         return len(self.image_names)
     
     def __getitem__(self,index):
-        image_name = os.path.join(self.image_dir, self.image_names[index])
-        large_image = self.large_resizer(Image.open(image_name))
-        small_image = self.small_resizer(Image.open(image_name))
+        image_path = os.path.join(self.image_dir, self.image_names[index])
+        src_image = Image.open(image_name)
+
+        if self.preprocess is not None:
+            src_image = self.preprocess(src_image)
+
+        large_image = self.large_resizer(src_iamge)
+        small_image = self.small_resizer(src_iamge)
 
         if self.transform is not None:
             large_image = self.transform(large_image)
             small_image = self.transform(small_image)
 
         return small_image, large_image
+
+class Verticalrotation():  # rotation 0 90 180 270
+    def __init__(self):
+        pass
+
+    def __call__(self, image):  # image Image
+        flag = np.random.random()
+        width , height = image.size
+        assert width == height , "width must be same height"
+        if flag <= 1/4:
+            return image
+        elif flag <= 1/2:
+            return image.rotate(90)
+        elif flag <= 3/4:
+            return image.rotate(180)
+        else:
+            return image.rotate(270)
+
+

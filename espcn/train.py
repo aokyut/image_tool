@@ -2,7 +2,7 @@ import sys
 sys.path.append("../modules")
 import torch
 from networks import Espcn
-from utils import SetImageDataset, raplacian_loss
+from utils import SetImageDataset, raplacian_loss, Verticalrotation
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -31,6 +31,8 @@ parser.add_argument("--batch_size_test", type=int, default=4)
 parser.add_argument("--n_record_iter", type=int, default=100)
 parser.add_argument("--n_save_model", type=int, default=100)
 
+parser.add_argument("--l_raplacian", type=float, default=0)
+
 opt = parser.parse_args()
 
 if __name__ == "__main__":
@@ -46,10 +48,11 @@ if __name__ == "__main__":
     train_data = SetImageDataset(opt.dataset_dir,
                                  datamode="train",
                                  smaller_pix=opt.small_pix,
-                                 transform=transforms.Compose([
-                                     transforms.RandomHorizontalFlip(),
-                                     transforms.RandomVerticalFlip(),
-                                     transforms.ToTensor()]),
+                                 preprocess=transforms.Compose([
+                                     transforms.RandomHorizontalFlip,
+                                     Verticalrotation
+                                 ])
+                                 transform=transforms.ToTensor(),
                                  upscale=opt.upscale)
     test_data = SetImageDataset(opt.dataset_dir,
                                  datamode="test",
@@ -111,8 +114,7 @@ if __name__ == "__main__":
                 # learning process
                 mse_loss = loss_fn(y_pred, yy)
                 rap_loss = raplacian_loss(y_pred, yy, device)
-
-                loss = mse_loss + rap_loss
+                loss = mse_loss + opt.l_raplacian * rap_loss
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -135,7 +137,7 @@ if __name__ == "__main__":
 
                         test_mse_loss = loss_fn(y_pred, yy)
                         test_rap_loss = raplacian_loss(y_pred, yy, device)
-                        test_loss = test_mse_loss + test_rap_loss
+                        test_loss = test_mse_loss + opt.l_raplacian * test_rap_loss
 
                         test_loss_list.append(test_loss.item())
                         test_mse_loss_list.append(test_mse_loss.item())
