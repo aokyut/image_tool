@@ -58,8 +58,8 @@ class SetImageDataset(Dataset):
         if self.preprocess is not None:
             src_image = self.preprocess(src_image)
 
-        large_image = self.large_resizer(src_iamge)
-        small_image = self.small_resizer(src_iamge)
+        large_image = self.large_resizer(src_image)
+        small_image = self.small_resizer(src_image)
 
         if self.transform is not None:
             large_image = self.transform(large_image)
