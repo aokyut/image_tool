@@ -39,7 +39,7 @@ class SetImageDataset(Dataset):
         super().__init__()
         self.small_resizer = transforms.Resize(smaller_pix)
         self.large_resizer = transforms.Resize(smaller_pix * upscale)
-        self.transfrom = transform
+        self.transform = transform
         self.preprocess = preprocess
         if datamode == "val":
             self.image_dir = root
