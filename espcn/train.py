@@ -51,7 +51,7 @@ if __name__ == "__main__":
                                  preprocess=transforms.Compose([
                                      transforms.RandomHorizontalFlip,
                                      Verticalrotation
-                                 ])
+                                 ]),
                                  transform=transforms.ToTensor(),
                                  upscale=opt.upscale)
     test_data = SetImageDataset(opt.dataset_dir,
