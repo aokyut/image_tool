@@ -46,10 +46,12 @@ if __name__ == "__main__":
     print("Device :", device)
     
     # ---------------Dataset setting-----------------
+    large_size = opt.small_pix * opt.upscale
     train_data = SetImageDataset(opt.dataset_dir,
                                  datamode="train",
                                  smaller_pix=opt.small_pix,
                                  preprocess=transforms.Compose([
+                                     transforms.RandomCrop(size=(large_size, large_size)),
                                      transforms.RandomHorizontalFlip(),
                                      Verticalrotation()
                                  ]),
@@ -58,6 +60,7 @@ if __name__ == "__main__":
     test_data = SetImageDataset(opt.dataset_dir,
                                  datamode="test",
                                  smaller_pix=opt.small_pix,
+                                 preprocess=transforms.RandomCrop(size=(large_size, large_size)),
                                  transform=transforms.ToTensor(),
                                  upscale=opt.upscale)
         

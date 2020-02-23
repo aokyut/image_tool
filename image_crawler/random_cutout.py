@@ -4,6 +4,7 @@ import cv2
 from random import randint
 import argparse
 from tqdm import tqdm
+from numpy.random import permutation
 
 def cut_out(img,x,y,xd,yd):
     return img[y : yd , x : xd]
@@ -36,7 +37,6 @@ def random_cutout(filename, cut_num, output_dir, min_pix = 20, max_pix = None):
             yd, y = get_point(height, min_pix, max_pix)
         except:
             continue
-        
         cut_out_img = cut_out(whole_img,x,y,xd,yd)
         
         output_filename = str(i) + os.path.basename(filename)
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     min_pix = int(args.min_pix)
     max_pix = int(args.max_pix) if args.max_pix is not None else None
 
-    pathes = os.listdir(input_dir)[:args.use_file_num]
+    pathes = permutation(os.listdir(input_dir))[:args.use_file_num]
     with tqdm(pathes) as t:
         for path in t:
             filename = os.path.join(input_dir, path)

@@ -13,7 +13,7 @@ class Espcn(nn.Module):
                                           nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
                                           nn.LeakyReLU(),
                                           nn.BatchNorm2d(64),
-                                          nn.Conv2d(64, 32, kernel_size=5, stride=1, padding=2),
+                                          nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
                                           nn.LeakyReLU(),
                                           nn.BatchNorm2d(32),
                                           nn.Conv2d(32, 3*(upscale**2), kernel_size=3, stride=1, padding=1),
