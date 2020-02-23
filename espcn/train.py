@@ -162,10 +162,9 @@ if __name__ == "__main__":
 
                     net.train()
                 if step % opt.n_save_model == 0:
-                    iter = step * opt.batch_size
                     if not os.path.exists(os.path.join(opt.checkpoints_dir, opt.exper_name)):
                         os.makedirs(os.path.join(opt.checkpoints_dir,opt.exper_name))
-                    model_save_path = os.path.join(opt.checkpoints_dir, opt.exper_name, "model_" + str(iter) + ".pth")
+                    model_save_path = os.path.join(opt.checkpoints_dir, opt.exper_name, "model_" + str(step) + ".pth")
                     torch.save(net.state_dict(), model_save_path)
 
     print("training process finish")

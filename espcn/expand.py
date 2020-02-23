@@ -28,6 +28,12 @@ opt = parser.parse_args()
 
 
 if __name__ == "__main__":
+    print("input :",opt.input)
+    print("output directory :", opt.output_dir)
+    if opt.val is True:
+        print("execute mode : val")
+    else:
+        print("execute mode : expand")
     # -----Device setting-----
     if opt.gpu:
         if torch.cuda.is_available():
@@ -44,108 +50,37 @@ if __name__ == "__main__":
     net.load_state_dict(torch.load(opt.model_path, map_location="cpu"))
     net.to(device)
     net.eval()
-    print("model scale {} -> {}".format(opt.small_pix, opt.small_pix * opt.upscale))
+    print("model upscale factor :", opt.upscale)
 
     # -----Target dir-----
     image_paths = os.listdir(opt.input)
 
-
-def expand_exact_pix(input_path, output_path, model=net, device=device, opt=opt):
-    input_image = Image(input_path)
-    small_resizer = transforms.Compose([
-        transforms.Resize(opt.small_pix),
-        transforms.ToTensor()
-    ])
-    xx = small_resizer(input_image)
-    pred_image = model(xx)
-    save_image(pred_image, output_path)
-
 def make_grid(input_path, output_path, model=net, device=device, opt=opt):
-    input_image = Image(input_path)
+    input_image = Image.open(input_path)
+    width, height = input_image.size
     small_resizer = transforms.Compose([
-        transforms.Resize(opt.small_pix),
+        transforms.Resize((height // opt.upscale, width // opt.upscale)),
         transforms.ToTensor()
     ])
     large_resizer = transforms.Compose([
-        transforms.Resize(opt.small_pix * opt.upscale),
+        transforms.Resize(((height // opt.upscale) * opt.upscale, (width // opt.upscale) * opt.upscale)),
         transforms.ToTensor()
     ])
-    xx = small_resizer(input_image)
-    yy = large_resizer(input_image)
+    xx = small_resizer(input_image).unsqueeze(0)
+    yy = large_resizer(input_image).unsqueeze(0)
     pred_image = model(xx)
     size = int(opt.small_pix * opt.upscale)
-    bl_recon = torch.nn.functional.upsample(xx, 128, mode="bilinear", align_corners=True)
-    save_image(torch.cat([yy, bl_recon, pre_image], dim=0), output_path)
+    bl_recon = torch.nn.functional.upsample(xx, scale_factor=opt.upscale, mode="bilinear", align_corners=True)
+    save_image(torch.cat([yy, bl_recon, pred_image], dim=0), output_path)
 
-def expand_any_pix(input_path, output_path, model=net, opt=opt):  # resize any size image
-    im = Image.open(input_path)
-    width, height = im.size
-    print(im.size)
-    # -----Size check-----
-    assert width >= opt.small_pix and height >= opt.small_pix, \
-        "width or height of image should be larger than small_pix"
-
-    # -----Split and Super resolution-----
-    whole_im_list = []
-    for i in range(height//opt.small_pix):
-        line_im_list = []
-        for j in range(width//opt.small_pix):
-            # crop target part
-            top = i * opt.small_pix
-            left = j * opt.small_pix
-            src_im = F.crop(im, top, left, opt.small_pix, opt.small_pix)
-            src_im = F.to_tensor(src_im).unsqueeze(0)
-            pred_im = model(src_im)
-
-            line_im_list.append(pred_im)
-
-        top = i * opt.small_pix
-        left = width - opt.small_pix
-        src_im = F.crop(im, top, left, opt.small_pix, opt.small_pix)
-        src_im = F.to_tensor(src_im).unsqueeze(0)
-        pred_im = model(src_im)
-        pred_im = pred_im[: , :, :, 2 * (opt.small_pix - (width % opt.small_pix)):]
-
-        line_im_list.append(pred_im)
-
-        line_im = torch.cat(line_im_list, dim=3)
-        whole_im_list.append(line_im)
-    
-    line_im_list = []
-    top = height - opt.small_pix
-    
-    for j in range(width//opt.small_pix):
-        left = j * opt.small_pix
-        src_im = F.crop(im, top, left, opt.small_pix, opt.small_pix)
-        src_im = F.to_tensor(src_im).unsqueeze(0)
-        pred_im = model(src_im)
-        pred_im = pred_im[:, :, 2 * (opt.small_pix - (height % opt.small_pix)): , :]
-
-        line_im_list.append(pred_im)
-    
-    top = height - opt.small_pix
-    left = width - opt.small_pix
-    src_im = F.crop(im, top, left, opt.small_pix, opt.small_pix)
-    src_im = F.to_tensor(src_im).unsqueeze(0)
-    pred_im = model(src_im)
-    pred_im = pred_im[:, :, 2 * (opt.small_pix - (height % opt.small_pix)): , 2 * (opt.small_pix - (width % opt.small_pix)): ]
-
-    line_im_list.append(pred_im)
-    
-    line_im = torch.cat(line_im_list, dim=3)
-    whole_im_list.append(line_im)
-
-    whole_im = torch.cat(whole_im_list, dim=2)
-
-    if opt.val is True:
-        bl_transform = transforms.Compose([
-            transforms.Resize((opt.upscale * height, opt.upscale * width)),
-            transforms.ToTensor()
-        ])
-        bl_recon = bl_transform(im).unsqueeze(0)
-        save_image(torch.cat((whole_im, bl_recon), dim=3), output_path)
-    else:
-        save_image(whole_im, output_path)
+def expand(input_path, output_path, model=net, device=device, opt=opt):
+    input_image = Image.open(input_path)
+    width, height = input_image.size
+    transform = transforms.ToTensor()
+    xx = transform(input_image)
+    pred_image = model(xx)
+    bl_recon = torch.nn.functional.upsample(xx, scale_factor=opt.upscale)
+    save_image(torch.cat([bl_recon, pred_image], dim=0), output_path)
 
 def isimage(path):
     return os.path.isfile(path)
@@ -154,16 +89,22 @@ if __name__ == "__main__":
     if os.path.isfile(opt.input):  # when input is file
         output_name = os.path.basename(opt.input)
         output_path = os.path.join(opt.output_dir, output_name)
-        expand_any_pix(opt.input, output_path)
+        if opt.val is True:
+            make_grid(input, output_path)
+        else:
+            expand(input, output_path)
     else:  # when input is directory
         input_names = os.listdir(opt.input)
-        for input_name in input_names:
+        for input_name in tqdm(input_names):
             input_path = os.path.join(opt.input, input_name)
             if not isimage(input_path):
                 continue
             output_name = os.path.basename(input_name)
             output_path = os.path.join(opt.output_dir, output_name)
-            expand_any_pix(input_path, output_path)
+            if opt.val is True:
+                make_grid(input_path, output_path)
+            else:
+                expand(input_path, output_path)
 
 
     
