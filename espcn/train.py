@@ -19,7 +19,7 @@ parser.add_argument("--record_dir", type=str, default="../tensorboard")
 
 #resume
 parser.add_argument("--load_dir", type=str, default="../checkpoint")
-parser.add_argument("--resume_step", type=int, default=0)
+parser.add_argument("--resume_iter", type=int, default=0)
 
 parser.add_argument("--gpu", action="store_true", default=False)
 
@@ -69,11 +69,11 @@ if __name__ == "__main__":
     print("dataset directory :", opt.dataset_dir)
 
     # ---------------Summary Writer setting---------------
-    if opt.resume_step != 0:
+    if opt.resume_iter != 0:
         train_writer = SummaryWriter(log_dir=os.path.join(opt.record_dir,opt.exper_name),
-                                     purge_step=opt.resume_step)
+                                     purge_step=opt.resume_iter)
         test_writer = SummaryWriter(log_dir=os.path.join(opt.record_dir, opt.exper_name + "_test"),
-                                    purge_step=opt.resume_step)
+                                    purge_step=opt.resume_iter)
         pass
     else:
         train_writer = SummaryWriter(log_dir=os.path.join(opt.record_dir, opt.exper_name))
@@ -83,11 +83,11 @@ if __name__ == "__main__":
     # ----------------Net Work define-----------------
     net = Espcn(upscale=opt.upscale)
 
-    if opt.resume_step != 0:
-        load_model_path = os.path.join(opt.load_dir, "model_{}.pth".format(opt.resume_step))
+    if opt.resume_iter != 0:
+        load_model_path = os.path.join(opt.load_dir, "model_{}.pth".format(opt.resume_iter))
         if os.path.exists(load_model_path):
             net.load_state_dict(torch.load(load_model_path))
-            print("resume from {}".format(opt.resume_step))
+            print("resume from {}".format(opt.resume_iter))
         else:
             assert LoadModelNotFoundError
     else:
@@ -104,8 +104,8 @@ if __name__ == "__main__":
     running_loss = np.zeros(10)
     step = 0
 
-    if opt.resume_step != 0:
-        step = opt.resume_step
+    if opt.resume_iter != 0:
+        step = opt.resume_iter // opt.batch_size
 
     for i in tqdm(range(opt.epoch)):
         with tqdm(train_loader, leave=False) as t:
@@ -164,7 +164,7 @@ if __name__ == "__main__":
                 if step % opt.n_save_model == 0:
                     if not os.path.exists(os.path.join(opt.checkpoints_dir, opt.exper_name)):
                         os.makedirs(os.path.join(opt.checkpoints_dir,opt.exper_name))
-                    model_save_path = os.path.join(opt.checkpoints_dir, opt.exper_name, "model_" + str(step) + ".pth")
+                    model_save_path = os.path.join(opt.checkpoints_dir, opt.exper_name, "model_" + str(step * opt.batch_size) + ".pth")
                     torch.save(net.state_dict(), model_save_path)
 
     print("training process finish")
