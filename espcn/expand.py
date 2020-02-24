@@ -52,9 +52,6 @@ if __name__ == "__main__":
     net.eval()
     print("model upscale factor :", opt.upscale)
 
-    # -----Target dir-----
-    image_paths = os.listdir(opt.input)
-
 def make_grid(input_path, output_path, model=net, device=device, opt=opt):
     input_image = Image.open(input_path)
     width, height = input_image.size
@@ -74,13 +71,14 @@ def make_grid(input_path, output_path, model=net, device=device, opt=opt):
     save_image(torch.cat([yy, bl_recon, pred_image], dim=0), output_path)
 
 def expand(input_path, output_path, model=net, device=device, opt=opt):
+    print(input_path)
     input_image = Image.open(input_path)
     width, height = input_image.size
     transform = transforms.ToTensor()
-    xx = transform(input_image)
+    xx = transform(input_image).unsqueeze(0)
     pred_image = model(xx)
     bl_recon = torch.nn.functional.upsample(xx, scale_factor=opt.upscale)
-    save_image(torch.cat([bl_recon, pred_image], dim=0), output_path)
+    save_image(pred_image, output_path)
 
 def isimage(path):
     return os.path.isfile(path)
@@ -90,9 +88,9 @@ if __name__ == "__main__":
         output_name = os.path.basename(opt.input)
         output_path = os.path.join(opt.output_dir, output_name)
         if opt.val is True:
-            make_grid(input, output_path)
+            make_grid(opt.input, output_path)
         else:
-            expand(input, output_path)
+            expand(opt.input, output_path)
     else:  # when input is directory
         input_names = os.listdir(opt.input)
         for input_name in tqdm(input_names):
