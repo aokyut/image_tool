@@ -11,3 +11,4 @@ image_crawler/chrome_crawl.py
 checkpoints/*
 tensorboard/*
 espcn/results
+image_crawler/*
