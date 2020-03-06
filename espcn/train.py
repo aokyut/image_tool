@@ -97,6 +97,7 @@ if __name__ == "__main__":
     loss_fn = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(net.parameters())
 
+
         
     # ----------------Main train Process------------------
     print("training process start")

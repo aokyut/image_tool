@@ -77,7 +77,8 @@ def expand(input_path, output_path, model=net, device=device, opt=opt):
     transform = transforms.ToTensor()
     xx = transform(input_image).unsqueeze(0)
     pred_image = model(xx)
-    bl_recon = torch.nn.functional.upsample(xx, scale_factor=opt.upscale)
+    image = transforms.ToPILImage()(pred_image.squeeze())
+    image.show()
     save_image(pred_image, output_path)
 
 def isimage(path):
