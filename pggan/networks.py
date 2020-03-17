@@ -244,7 +244,6 @@ class Pg_Discriminator(nn.Module):
         x_downer = self.fromrgb[self.stage - 1](x_downer)
 
         x = x_upper * (alpha) + x_downer * (1 - alpha)
-        print(self.stage)
         for i in range(self.stage - 1, -1, -1):
             x = self.net[i](x)
         

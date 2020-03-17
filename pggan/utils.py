@@ -4,6 +4,8 @@ import torch
 import os
 from PIL import Image
 
+from math import log2
+
 
 class Scalable_Dataset(Dataset):
     def __init__(self, root, datamode = "train", transform = transforms.ToTensor(), latent_size=512):
@@ -29,8 +31,10 @@ class Scalable_Dataset(Dataset):
     def __getitem__(self, index):
         img_path = self.image_paths[index]
         img = Image.open(img_path)
+
         if img.size != (64,64):
             print(img_path)
+
         resized_img = transforms.functional.resize(img, self.resolution)
         
         latent = torch.randn(size=(self.latent_size, 1, 1))
@@ -48,7 +52,7 @@ class HingeLoss(torch.nn.Module):
 
     def forward(self, output_d, isreal=True):
         if self.mode == "g":
-            return torch.mean(output_d)
+            return -torch.mean(output_d)
 
         zero_tensor = torch.zeros(output_d.shape)
         
