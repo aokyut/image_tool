@@ -111,6 +111,10 @@ def main(opt):
         test_dataset.resolution = resolution_list[stage]
         print("stage :",stage)
         print("resolution :", resolution_list[stage])
+
+        if stage + 1 < opt.start_step:
+            print("skip")
+            continue
          # ----- Training Step -----
         for epoch in range(opt.epoch):
             print("epoch :", epoch)
