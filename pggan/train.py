@@ -112,7 +112,7 @@ def main(opt):
         print("stage :",stage)
         print("resolution :", resolution_list[stage])
 
-        if stage + 1 < opt.start_step:
+        if stage + 1 < opt.start_stage:
             print("skip")
             continue
          # ----- Training Step -----
