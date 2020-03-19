@@ -55,10 +55,32 @@ def main(opt):
     # ----- Net Work Setting -----
     latent_size = opt.latent_size
     model_D = Pg_Discriminator(resolution=opt.resolution,
-                               transition_iter=opt.transition_iter)
+                               transition_iter=opt.transition_iter,
+                               start_stage=opt.start_stage)
     model_G = Pg_Generator(resolution=opt.resolution,
                            transition_iter=opt.transition_iter,
-                           latent_size=opt.latent_size)
+                           latent_size=opt.latent_size,
+                           start_stage=opt.start_stage)
+    
+    # ----- Resume -----
+    if opt.start_step != 1:
+        print("resume :on")
+        model_names = os.listdir(os.path.join(opt.checkpoints, opt.exper)).split("_")
+        model_num = [model_name.split("_")[1] for model_name in model_names]
+
+        if str(opt.start_step - 1) in model_num:
+            model_path = os.path.join(opt.checkpoints, opt.exper)
+            model_g_path = os.path.join(model_path, "model_{}_G.pth".format(str(opt.start_step - 1)))
+            model_d_path = os.path.join(model_path, "model_{}_D.pth".format(str(opt.start_step - 1)))
+
+            model_G.load_state_dict(torch.load(model_g_path, map_location="cpu"))
+            model_D.load_state_dict(torch.load(model_d_path, map_location="cpu"))
+            print("model_G path :", model_g_path)
+            print("model_D path :", model_d_path)
+        else:
+            print("model_{} not found".format(str(opt.start_step - 1)))
+    # -----
+
     model_D.to(device)
     model_G.to(device)
     model_D.train()
@@ -70,8 +92,10 @@ def main(opt):
     optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0002)
     optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0002)
 
+
     print("Model resolution :",opt.resolution)
     print("Latent size :",opt.latent_size)
+
     
     # ----- Training Loop -----
 
@@ -186,6 +210,7 @@ def main(opt):
         
         if stage == stages - 1:
             break
+
         # transition step
         iter_loader = iter(train_loader)
         model_D.stand_growing_flag()
@@ -281,6 +306,16 @@ def main(opt):
                 print("mode : transition")
                 print("loss_g :", loss_g.item())
                 print("loss_d :", loss_d.item())
+        
+        if opt.save is True:
+            save_dir = os.path.join(opt.checkpoints, opt.exper)
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
+            model_g_path = os.path.join(save_dir, "model_{}_G.pth".format(str(stage + 1)))
+            model_d_path = os.path.join(save_dir, "model_{}_D.pth".format(str(stage + 1)))
+            torch.save(model_D.state_dict(). model_d_path)
+            torch.save(model_G.state_dict(). model_g_path)
+
     # save model 
     print("finish training")
     print("model save")
@@ -314,9 +349,10 @@ if __name__ == "__main__":
 
     parser.add_argument("--n_log_step", type=int, default=10)
     parser.add_argument("--n_display_step", type=int, default=10)
+    parser.add_argument("--save", action="store_true", default=False)
 
-    # ToDo
-    parser.add_argument("--n_model_save", type=int, default=10000)
+    # resume
+    parser.add_argument("--start_stage", type=int, default=1)
     
     opt = parser.parse_args()
 
