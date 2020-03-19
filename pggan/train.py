@@ -63,22 +63,22 @@ def main(opt):
                            start_stage=opt.start_stage)
     
     # ----- Resume -----
-    if opt.start_step != 1:
+    if opt.start_stage != 1:
         print("resume :on")
         model_names = os.listdir(os.path.join(opt.checkpoints, opt.exper)).split("_")
         model_num = [model_name.split("_")[1] for model_name in model_names]
 
-        if str(opt.start_step - 1) in model_num:
+        if str(opt.start_stage - 1) in model_num:
             model_path = os.path.join(opt.checkpoints, opt.exper)
-            model_g_path = os.path.join(model_path, "model_{}_G.pth".format(str(opt.start_step - 1)))
-            model_d_path = os.path.join(model_path, "model_{}_D.pth".format(str(opt.start_step - 1)))
+            model_g_path = os.path.join(model_path, "model_{}_G.pth".format(str(opt.start_stage - 1)))
+            model_d_path = os.path.join(model_path, "model_{}_D.pth".format(str(opt.start_stage - 1)))
 
             model_G.load_state_dict(torch.load(model_g_path, map_location="cpu"))
             model_D.load_state_dict(torch.load(model_d_path, map_location="cpu"))
             print("model_G path :", model_g_path)
             print("model_D path :", model_d_path)
         else:
-            print("model_{} not found".format(str(opt.start_step - 1)))
+            print("model_{} not found".format(str(opt.start_stage - 1)))
     # -----
 
     model_D.to(device)
