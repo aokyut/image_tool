@@ -317,8 +317,8 @@ def main(opt):
                 os.makedirs(save_dir)
             model_g_path = os.path.join(save_dir, "model_{}_G.pth".format(str(stage + 1)))
             model_d_path = os.path.join(save_dir, "model_{}_D.pth".format(str(stage + 1)))
-            torch.save(model_D.state_dict(). model_d_path)
-            torch.save(model_G.state_dict(). model_g_path)
+            torch.save(model_D.state_dict(), model_d_path)
+            torch.save(model_G.state_dict(), model_g_path)
 
     # save model 
     print("finish training")
