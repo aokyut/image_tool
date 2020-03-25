@@ -65,7 +65,7 @@ def main(opt):
     # ----- Resume -----
     if opt.start_stage != 1:
         print("resume :on")
-        model_names = os.listdir(os.path.join(opt.checkpoints, opt.exper)).split("_")
+        model_names = os.listdir(os.path.join(opt.checkpoints, opt.exper))
         model_num = [model_name.split("_")[1] for model_name in model_names]
 
         if str(opt.start_stage - 1) in model_num:
