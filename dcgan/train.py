@@ -172,8 +172,8 @@ def main(opt):
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    model_g_path = os.path.join(save_dir, "model_G.pth".format(str(stage + 1)))
-    model_d_path = os.path.join(save_dir, "model_D.pth".format(str(stage + 1)))
+    model_g_path = os.path.join(save_dir, "model_G.pth")
+    model_d_path = os.path.join(save_dir, "model_D.pth")
     torch.save(model_D.state_dict(), model_d_path)
     torch.save(model_G.state_dict(), model_g_path)
     
