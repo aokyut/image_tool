@@ -177,7 +177,7 @@ def main(opt):
             torch.save(model_D.state_dict(), model_d_path)
             torch.save(model_G.state_dict(), model_g_path)
 
-            print(save_model)
+            print("save_model")
 
     # save model
     save_dir = os.path.join(opt.checkpoints_dir, opt.exper)
