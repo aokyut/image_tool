@@ -166,14 +166,25 @@ def main(opt):
 
                 model_D.train()
                 model_G.train()
+        if epoch + 1 % opt.n_save_epoch == 0:
+            save_dir = os.path.join(opt.checkpoints_dir, opt.exper)
+
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
+            model_g_path = os.path.join(save_dir, "model_G_{}.pth".format(str(epoch + 1)))
+            model_d_path = os.path.join(save_dir, "model_D_{}.pth".format(str(epoch + 1)))
+            torch.save(model_D.state_dict(), model_d_path)
+            torch.save(model_G.state_dict(), model_g_path)
+
+            print(save_model)
 
     # save model
     save_dir = os.path.join(opt.checkpoints_dir, opt.exper)
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    model_g_path = os.path.join(save_dir, "model_G.pth")
-    model_d_path = os.path.join(save_dir, "model_D.pth")
+    model_g_path = os.path.join(save_dir, "model_G_{}.pth".format(str(opt.epoch)))
+    model_d_path = os.path.join(save_dir, "model_D_{}.pth".format(str(opt.epoch)))
     torch.save(model_D.state_dict(), model_d_path)
     torch.save(model_G.state_dict(), model_g_path)
     
@@ -190,6 +201,7 @@ if __name__ == "__main__":
     parser.add_argument("--test_batch_size", type=int, default=4)
     parser.add_argument("--n_log_step", type=int, default=10)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--n_save_epoch", type=int, default=10)
 
     parser.add_argument("--latent_size", type=int, default=100)
 
