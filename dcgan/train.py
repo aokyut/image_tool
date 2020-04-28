@@ -29,7 +29,7 @@ def main(opt):
 
     # ----- Dataset Setting -----
     train_dataset = Dcgan_Dataset(opt.dataset, datamode="train",
-                                  transform=transforms.Compose([transforms.RandomVerticalFlip(),
+                                  transform=transforms.Compose([transforms.RandomHorizontalFlip(),
                                                                 transforms.ToTensor()]))
     
     test_dataset = Dcgan_Dataset(opt.dataset, datamode="test")
