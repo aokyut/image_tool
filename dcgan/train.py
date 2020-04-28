@@ -168,7 +168,7 @@ def main(opt):
                 model_G.train()
 
     # save model
-    save_dir = os.path.join(opt.checkpoints, opt.exper)
+    save_dir = os.path.join(opt.checkpoints_dir, opt.exper)
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
