@@ -75,7 +75,7 @@ def main(opt):
 
     # ----- Training Loop -----
     step = 0
-    for epoch in range(opt.epoch):
+    for epoch in tqdm(range(opt.epoch)):
         print("epoch :",epoch + 1,"/", opt.epoch)
 
         # for latent, real_img in tqdm(train_loader):
