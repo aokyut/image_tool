@@ -167,7 +167,7 @@ def main(opt):
 
                 model_D.train()
                 model_G.train()
-        if epoch + 1 % opt.n_save_epoch == 0:
+        if (epoch + 1) % opt.n_save_epoch == 0:
             save_dir = os.path.join(opt.checkpoints_dir, opt.exper)
 
             if not os.path.exists(save_dir):
