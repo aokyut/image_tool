@@ -78,7 +78,8 @@ def main(opt):
     for epoch in range(opt.epoch):
         print("epoch :",epoch + 1,"/", opt.epoch)
 
-        for latent, real_img in tqdm(train_loader):
+        # for latent, real_img in tqdm(train_loader):
+        for latent, real_img in train_loader:
             step += 1
             latent = latent.to(device)
             real_img = real_img.to(device)
