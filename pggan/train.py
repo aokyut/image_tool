@@ -6,7 +6,7 @@ from utils import Scalable_Dataset, HingeLoss, BLoss
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
-from torchvision.utils import make_grid
+from torchvision.utils import make_grid, save_image
 from torch.utils.tensorboard import SummaryWriter
 import torch
 
@@ -197,10 +197,11 @@ def main(opt):
                     
                     latents = torch.randn(size=(9, opt.latent_size, 1, 1))
                     pred_img = model_G(latents)
-                    grid_img = make_grid(pred_img, nrow=3, padding=0)
-                    grid_img = grid_img.mul(0.5).add_(0.5)
+                    save_image(pred_img, opt.result_dir, nrow=3)
+                    # grid_img = make_grid(pred_img, nrow=3, padding=0)
+                    # grid_img = grid_img.mul(0.5).add_(0.5)
 
-                    train_writer.add_image("train/{}/{}".format(stage, epoch), grid_img, step)
+                    # train_writer.add_image("train/{}/{}".format(stage, epoch), grid_img, step)
                     
                     
                     model_G.train()
@@ -343,6 +344,7 @@ if __name__ == "__main__":
     parser.add_argument("--resolution", type=int, default=64, help="final resolution of model")
     parser.add_argument("--device", type=str, choices=["cpu", "gpu"], default="cpu")
     parser.add_argument("--latent_size", type=int, default=512)
+    parser.add_argument("--result_dir", default="hoge")
 
     parser.add_argument("--epoch", type=int, default=5, help="epoch number in each stage")
     parser.add_argument("--transition_iter", type=int, default=8000, help="image number of transition step")
