@@ -116,7 +116,7 @@ def main(opt):
             print("skip")
             continue
          # ----- Training Step -----
-        epochs = [5, 10, 10, 20, 20]
+        epochs = [10, 20, 20, 40, 100]
         for epoch in range(epochs[stage - 1]):
             print("epoch :", epoch)
             epoch_num += 1
