@@ -56,6 +56,14 @@ def main(opt):
     model_D = Discriminator()
     model_G = Generator()
 
+    # resume
+    if opt.resume_epoch != 0:
+        model_D_path = os.path.join(opt.checkpoints_dir, opt.exper, "model_D_{}".format(str(opt.resume_epoch)))
+        model_G_path = os.path.join(opt.checkpoints_dir, opt.exper, "model_G_{}".format(str(opt.resume_epoch)))
+
+        model_G.load_state_dict(torch.load(model_G_path, map_location="cpu"))
+        model_D.load_state_dict(torch.load(model_D_path, map_location="cpu"))
+
     model_D.to(device)
     model_G.to(device)
     model_D.train()
@@ -75,8 +83,8 @@ def main(opt):
 
     # ----- Training Loop -----
     step = 0
-    for epoch in tqdm(range(opt.epoch)):
-        print("epoch :",epoch + 1,"/", opt.epoch)
+    for epoch in tqdm(range(opt.resume_epoch, opt.resume_epoch + opt.epoch)):
+        print("epoch :",epoch + 1,"/", opt.resume_epoch + opt.epoch)
 
         # for latent, real_img in tqdm(train_loader):
         for latent, real_img in train_loader:
@@ -205,6 +213,9 @@ if __name__ == "__main__":
     parser.add_argument("--n_save_epoch", type=int, default=10)
 
     parser.add_argument("--latent_size", type=int, default=100)
+
+    # resume
+    parser.add_argument("--resume_epoch", type=int, default=0)
 
     opt = parser.parse_args()
     main(opt)
