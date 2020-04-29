@@ -2,7 +2,7 @@ import sys
 sys.path.append("../modules")
 
 from networks import Pg_Generator, Pg_Discriminator
-from utils import Scalable_Dataset, HingeLoss
+from utils import Scalable_Dataset, HingeLoss, BLoss
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -39,7 +39,7 @@ def main(opt):
 
     # ----- DataLoader Setting -----
     batch_size_list = [512, 512, 256, 128, 64, 32, 16, 8, 3]
-    # batch_size_list = [128, 64, 32, 16, 8]
+    batch_size_list = [16, 16, 8, 6, 4]
     train_loader = DataLoader(train_dataset, batch_size=batch_size_list[0], shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=4, shuffle=True)
     print("batch_size :",batch_size_list)
@@ -86,8 +86,8 @@ def main(opt):
     model_D.train()
     model_G.train()
 
-    loss_fn_G = HingeLoss(mode="g")
-    loss_fn_D = HingeLoss(mode="d")
+    loss_fn_G = BLoss(mode="g")
+    loss_fn_D = BLoss(mode="d")
 
     optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0002)
     optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0002)
@@ -116,7 +116,8 @@ def main(opt):
             print("skip")
             continue
          # ----- Training Step -----
-        for epoch in range(opt.epoch):
+        epochs = [5, 10, 10, 20, 20]
+        for epoch in range(epochs[stage - 1]):
             print("epoch :", epoch)
             epoch_num += 1
             for latent, real_img in tqdm(train_loader):
@@ -194,13 +195,12 @@ def main(opt):
                     latent_names = os.listdir(latent_dir)
                     latent_paths = [os.path.join(latent_dir, name) for name in latent_names]
                     
-                    latents = [torch.from_numpy(np.load(latent_path)) for latent_path in latent_paths]
-                    latents = torch.cat(latents, dim=0)
+                    latents = torch.randn(size=(9, opt.latent_size, 1, 1))
                     pred_img = model_G(latents)
                     grid_img = make_grid(pred_img, nrow=3, padding=0)
                     grid_img = grid_img.mul(0.5).add_(0.5)
 
-                    train_writer.add_image("train/{}".format(stage), grid_img, step)
+                    train_writer.add_image("train/{}/{}".format(stage, epoch), grid_img, step)
                     
                     
                     model_G.train()
@@ -291,15 +291,11 @@ def main(opt):
                 test_writer.add_scalar("real/d_fake_loss", test_d_fake_loss, step)
 
                 # ----- eval -----
-
-                latent_dir = os.path.join(opt.dataset_dir, "val")
-                latent_names = os.listdir(latent_dir)
-                latent_paths = [os.path.join(latent_dir, name) for name in latent_names]
                 
-                latents = [torch.from_numpy(np.load(latent_path)) for latent_path in latent_paths]
-                latents = torch.cat(latents, dim=0)
+                latents = torch.randn(size=(9, opt.latent_size, 1, 1))
                 pred_img = model_G(latents)
                 grid_img = make_grid(pred_img, nrow=3, padding=0)
+                grid_img = grid_img.mul(0.5).add_(0.5)
 
                 train_writer.add_image("transition/{}".format(stage), grid_img, step)
                 
@@ -353,7 +349,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--n_log_step", type=int, default=10)
     parser.add_argument("--n_display_step", type=int, default=10)
-    parser.add_argument("--save", action="store_true", default=False)
+    parser.add_argument("--save", action="store_true", default=False) 
 
     # resume
     parser.add_argument("--start_stage", type=int, default=1)
