@@ -58,8 +58,8 @@ def main(opt):
 
     # resume
     if opt.resume_epoch != 0:
-        model_D_path = os.path.join(opt.checkpoints_dir, opt.exper, "model_D_{}".format(str(opt.resume_epoch)))
-        model_G_path = os.path.join(opt.checkpoints_dir, opt.exper, "model_G_{}".format(str(opt.resume_epoch)))
+        model_D_path = os.path.join(opt.checkpoints_dir, opt.exper, "model_D_{}.pth".format(str(opt.resume_epoch)))
+        model_G_path = os.path.join(opt.checkpoints_dir, opt.exper, "model_G_{}.pth".format(str(opt.resume_epoch)))
 
         model_G.load_state_dict(torch.load(model_G_path, map_location="cpu"))
         model_D.load_state_dict(torch.load(model_D_path, map_location="cpu"))
