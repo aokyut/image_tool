@@ -117,7 +117,7 @@ def main(opt):
             continue
          # ----- Training Step -----
         epochs = [10, 20, 20, 40, 100]
-        for epoch in range(epochs[stage - 1]):
+        for epoch in range(epochs[stage]):
             print("epoch :", epoch)
             epoch_num += 1
             for latent, real_img in tqdm(train_loader):
