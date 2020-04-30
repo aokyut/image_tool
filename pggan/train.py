@@ -197,7 +197,7 @@ def main(opt):
                     
                     latents = torch.randn(size=(9, opt.latent_size, 1, 1))
                     pred_img = model_G(latents)
-                    save_image(pred_img, os.path.jooin(opt.result_dir,"{}.png".format(str(step))), nrow=3)
+                    save_image(pred_img, os.path.join(opt.result_dir,"{}.png".format(str(step))), nrow=3)
                     # grid_img = make_grid(pred_img, nrow=3, padding=0)
                     # grid_img = grid_img.mul(0.5).add_(0.5)
 
