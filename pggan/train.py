@@ -158,8 +158,8 @@ def main(opt):
                     test_d_fake_losses = []
                     test_g_losses = []
                     for test_latent, test_real_img in test_loader:
-                        test_latent.to(device)
-                        test_real_img.to(device)
+                        test_latent = test_latent.to(device)
+                        test_real_img = test_real_img.to(device)
                         test_pred_img = model_G(test_latent)
                         test_fake_g = model_D(test_pred_img)
                         test_g_loss = loss_fn_G(test_fake_g)
