@@ -192,14 +192,6 @@ def main(opt):
                     test_writer.add_scalar("loss/d_fake_loss", test_d_fake_loss, step)
 
                     # ----- eval -----
-                    latent_dir = os.path.join(opt.dataset_dir, "val")
-                    latent_names = os.listdir(latent_dir)
-                    latent_paths = [os.path.join(latent_dir, name) for name in latent_names]
-                    
-                    latents = torch.randn(size=(9, opt.latent_size, 1, 1))
-                    pred_img = model_G(latents)
-                    pred_img_resize = F.interpolate(pred_img, size=(opt.resolution, opt.resolution), mode="nearest")
-                    save_image(pred_img_resize, os.path.join(opt.result_dir,"{}.png".format(str(step))), nrow=3)
                     # grid_img = make_grid(pred_img, nrow=3, padding=0)
                     # grid_img = grid_img.mul(0.5).add_(0.5)
 
@@ -214,6 +206,13 @@ def main(opt):
                     print("epoch :", epoch)
                     print("loss_G :", loss_G.item())
                     print("loss_D :", loss_D.item())
+            
+            # epoch
+            latents = torch.randn(size=(9, opt.latent_size, 1, 1))
+            pred_img = model_G(latents)
+            pred_img_resize = F.interpolate(pred_img, size=(opt.resolution, opt.resolution), mode="nearest")
+            save_image(pred_img_resize, os.path.join(opt.result_dir,"{}-{}.png".format(str(stage), str(epoch))), nrow=3)
+            
         
         if stage == stages - 1:
             break
