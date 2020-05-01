@@ -64,7 +64,8 @@ class G_block(nn.Module):
 class Torgb(nn.Module):
     def __init__(self, in_ch, out_ch=3):
         super().__init__()
-        self.net = nn.Conv2d(in_ch, out_ch, 1)
+        self.net = nn.Sequential([nn.Conv2d(in_ch, out_ch, 1),
+                                  nn.Tanh()])
     def forward(self, x):
         return self.net(x)
 
