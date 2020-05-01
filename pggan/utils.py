@@ -46,7 +46,7 @@ class Scalable_Dataset(Dataset):
         
 
 class HingeLoss(torch.nn.Module):
-    def __init__(self, mode="g", device):
+    def __init__(self, mode="g", device="cpu"):
         super().__init__()
         assert mode in ["g", "d"], "mode shoud be g or d"
         self.mode = mode
