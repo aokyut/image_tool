@@ -157,7 +157,7 @@ class D_final_block(nn.Module):
         )
     
     def forward(self, x):
-        stddev
+        # --stddev
         batch = x.shape[0]
         stddev = torch.std(x, dim=0, keepdim=True)
         std_mean = torch.mean(stddev, dim=(0, 1, 2, 3), keepdim=True)
