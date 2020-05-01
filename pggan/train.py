@@ -209,10 +209,10 @@ def main(opt):
                     print("loss_D :", loss_D.item())
             
             # epoch
-            latents = torch.randn(size=(9, opt.latent_size, 1, 1))
+            latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
             pred_img = model_G(latents)
             pred_img_resize = F.interpolate(pred_img, size=(opt.resolution, opt.resolution), mode="nearest")
-            save_image(pred_img_resize, os.path.join(opt.result_dir,"{}-{}.png".format(str(stage), str(epoch))), nrow=3)
+            save_image(pred_img_resize.to("cpu"), os.path.join(opt.result_dir,"{}-{}.png".format(str(stage), str(epoch))), nrow=3)
             
         
         if stage == stages - 1:
