@@ -46,16 +46,17 @@ class Scalable_Dataset(Dataset):
         
 
 class HingeLoss(torch.nn.Module):
-    def __init__(self, mode="g"):
+    def __init__(self, mode="g", device):
         super().__init__()
         assert mode in ["g", "d"], "mode shoud be g or d"
         self.mode = mode
+        self.device = device
 
     def forward(self, output_d, isreal=True):
         if self.mode == "g":
             return -torch.mean(output_d)
 
-        zero_tensor = torch.zeros(output_d.shape)
+        zero_tensor = torch.zeros(output_d.shape, device=device)
         
         if isreal is True:
             return -torch.mean(torch.min(output_d - 1, zero_tensor))
