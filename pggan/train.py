@@ -228,7 +228,7 @@ def main(opt):
         test_dataset.resolution = resolution_list[stage + 1]
         batch = batch_size_list[stage + 1]
 
-        iter_loader = DataLoader(tarin_dataset, batch_size=batch_size_list[stage + 1])
+        iter_loader = DataLoader(train_dataset, batch_size=batch_size_list[stage + 1])
         transition_step = (opt.transition_iter // batch) + 1
         for i in tqdm(range(transition_step)):
             step += 1
