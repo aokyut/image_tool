@@ -147,10 +147,10 @@ class D_final_block(nn.Module):
     def __init__(self, in_ch):
         super().__init__()
         self.net = nn.Sequential(
-            # nn.Conv2d(in_ch + 1, in_ch, kernel_size=3, padding=1, stride=1),
+            nn.Conv2d(in_ch + 1, in_ch, kernel_size=3, padding=1, stride=1),
 
-            # nn.Conv2d(in_ch, in_ch, kernel_size=3, padding=1, stride=1),
-            # nn.LeakyReLU(),
+            nn.Conv2d(in_ch, in_ch, kernel_size=3, padding=1, stride=1),
+            nn.LeakyReLU(),
             nn.Conv2d(in_ch, in_ch, kernel_size=4, padding=0, stride=1),
             nn.LeakyReLU(),
             nn.Conv2d(in_ch, 1, kernel_size=1)
@@ -158,12 +158,12 @@ class D_final_block(nn.Module):
     
     def forward(self, x):
         # --stddev
-        # batch = x.shape[0]
-        # stddev = torch.std(x, dim=0, keepdim=True)
-        # std_mean = torch.mean(stddev, dim=(0, 1, 2, 3), keepdim=True)
-        # std_channel = std_mean.repeat(batch, 1, 4, 4)
+        batch = x.shape[0]
+        stddev = torch.std(x, dim=0, keepdim=True)
+        std_mean = torch.mean(stddev, dim=(0, 1, 2, 3), keepdim=True)
+        std_channel = std_mean.repeat(batch, 1, 4, 4)
         
-        # x = torch.cat([x, std_channel], dim=1)
+        x = torch.cat([x, std_channel], dim=1)
         return self.net(x)
 
 class D_block(nn.Module):

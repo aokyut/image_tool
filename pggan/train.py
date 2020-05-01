@@ -249,7 +249,8 @@ def main(opt):
             loss_g.backward()
             optimizer_G.step()
 
-            pred_img = model_G(latent)
+            with torch.no_grad():
+                pred_img = model_G(latent)
             fake_d = model_D(pred_img)
             real_d = model_D(real_img)
             loss_d_real = loss_fn_D(real_d, isreal=True)
