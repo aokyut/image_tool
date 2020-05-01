@@ -20,7 +20,8 @@ import numpy as np
 
 def main(opt):
     # ----- Device Setting -----
-    if opt.device is "gpu":
+    if opt.device == "gpu":
+        print("try to use gpu")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     else:
         device = torch.device("cpu")
