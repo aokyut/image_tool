@@ -150,65 +150,65 @@ def main(opt):
                 optimizer_D.step()
 
                 # test step
-                if step % opt.n_log_step == 0:
-                    model_G.eval()
-                    model_D.eval()
-                    test_d_losses = []
-                    test_d_real_losses = []
-                    test_d_fake_losses = []
-                    test_g_losses = []
-                    for test_latent, test_real_img in test_loader:
-                        test_latent = test_latent.to(device)
-                        test_real_img = test_real_img.to(device)
-                        test_pred_img = model_G(test_latent)
-                        test_fake_g = model_D(test_pred_img)
-                        test_g_loss = loss_fn_G(test_fake_g)
+                # if step % opt.n_log_step == 0:
+                #     model_G.eval()
+                #     model_D.eval()
+                #     test_d_losses = []
+                #     test_d_real_losses = []
+                #     test_d_fake_losses = []
+                #     test_g_losses = []
+                #     for test_latent, test_real_img in test_loader:
+                #         test_latent = test_latent.to(device)
+                #         test_real_img = test_real_img.to(device)
+                #         test_pred_img = model_G(test_latent)
+                #         test_fake_g = model_D(test_pred_img)
+                #         test_g_loss = loss_fn_G(test_fake_g)
 
-                        test_g_losses.append(test_g_loss.item())
+                #         test_g_losses.append(test_g_loss.item())
 
-                        test_fake_d = model_D(test_pred_img)
-                        test_real_d = model_D(test_real_img)
-                        test_d_real_loss = loss_fn_D(test_real_d, isreal=True)
-                        test_d_fake_loss = loss_fn_D(test_fake_d, isreal=False)
-                        test_d_loss = test_d_real_loss + test_d_fake_loss
+                #         test_fake_d = model_D(test_pred_img)
+                #         test_real_d = model_D(test_real_img)
+                #         test_d_real_loss = loss_fn_D(test_real_d, isreal=True)
+                #         test_d_fake_loss = loss_fn_D(test_fake_d, isreal=False)
+                #         test_d_loss = test_d_real_loss + test_d_fake_loss
 
-                        test_d_real_losses.append(test_d_real_loss.item())
-                        test_d_fake_losses.append(test_d_fake_loss.item())
-                        test_d_losses.append(test_d_loss.item())
+                #         test_d_real_losses.append(test_d_real_loss.item())
+                #         test_d_fake_losses.append(test_d_fake_loss.item())
+                #         test_d_losses.append(test_d_loss.item())
                     
-                    # record process
-                    test_g_loss = sum(test_g_losses)/len(test_g_losses)
-                    test_d_loss = sum(test_d_losses)/len(test_d_losses)
-                    test_d_real_loss = sum(test_d_real_losses)/len(test_d_real_losses)
-                    test_d_fake_loss = sum(test_d_fake_losses)/len(test_d_fake_losses)
+                #     # record process
+                #     test_g_loss = sum(test_g_losses)/len(test_g_losses)
+                #     test_d_loss = sum(test_d_losses)/len(test_d_losses)
+                #     test_d_real_loss = sum(test_d_real_losses)/len(test_d_real_losses)
+                #     test_d_fake_loss = sum(test_d_fake_losses)/len(test_d_fake_losses)
 
 
-                    train_writer.add_scalar("loss/g_loss", loss_G.item(), step)
-                    train_writer.add_scalar("loss/d_loss", loss_D.item(), step)
-                    train_writer.add_scalar("loss/d_real_loss", loss_real_d.item(), step)
-                    train_writer.add_scalar("loss/d_fake_loss", loss_fake_d.item(), step)
-                    train_writer.add_scalar("loss/epoch", epoch_num, step)
+                #     train_writer.add_scalar("loss/g_loss", loss_G.item(), step)
+                #     train_writer.add_scalar("loss/d_loss", loss_D.item(), step)
+                #     train_writer.add_scalar("loss/d_real_loss", loss_real_d.item(), step)
+                #     train_writer.add_scalar("loss/d_fake_loss", loss_fake_d.item(), step)
+                #     train_writer.add_scalar("loss/epoch", epoch_num, step)
 
-                    test_writer.add_scalar("loss/g_loss", test_g_loss, step)
-                    test_writer.add_scalar("loss/d_loss", test_d_loss, step)
-                    test_writer.add_scalar("loss/d_real_loss", test_d_real_loss, step)
-                    test_writer.add_scalar("loss/d_fake_loss", test_d_fake_loss, step)
+                #     test_writer.add_scalar("loss/g_loss", test_g_loss, step)
+                #     test_writer.add_scalar("loss/d_loss", test_d_loss, step)
+                #     test_writer.add_scalar("loss/d_real_loss", test_d_real_loss, step)
+                #     test_writer.add_scalar("loss/d_fake_loss", test_d_fake_loss, step)
 
-                    # ----- eval -----
-                    # grid_img = make_grid(pred_img, nrow=3, padding=0)
-                    # grid_img = grid_img.mul(0.5).add_(0.5)
+                #     # ----- eval -----
+                #     # grid_img = make_grid(pred_img, nrow=3, padding=0)
+                #     # grid_img = grid_img.mul(0.5).add_(0.5)
 
-                    # train_writer.add_image("train/{}/{}".format(stage, epoch), grid_img, step)
+                #     # train_writer.add_image("train/{}/{}".format(stage, epoch), grid_img, step)
                     
                     
-                    model_G.train()
-                    model_D.train()
+                #     model_G.train()
+                #     model_D.train()
                 
-                if step % opt.n_display_step == 0:
-                    print("mode : training")
-                    print("epoch :", epoch)
-                    print("loss_G :", loss_G.item())
-                    print("loss_D :", loss_D.item())
+                # if step % opt.n_display_step == 0:
+                #     print("mode : training")
+                #     print("epoch :", epoch)
+                #     print("loss_G :", loss_G.item())
+                #     print("loss_D :", loss_D.item())
             
             # epoch
             latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
@@ -253,58 +253,60 @@ def main(opt):
             loss_d.backward()
             optimizer_D.step()
 
-            if step % opt.n_log_step == 0:
-                model_G.eval()
-                model_D.eval()
-                test_d_losses = []
-                test_d_real_losses = []
-                test_d_fake_losses = []
-                test_g_losses = []
-                for test_latent, test_real_img in test_loader:
-                    test_latent = test_latent.to(device)
-                    test_real_img = test_real_img.to(device)
-                    test_pred_img = model_G(test_latent)
-                    test_fake_g = model_D(test_pred_img)
-                    test_g_loss = loss_fn_G(test_fake_g)
 
-                    test_g_losses.append(test_g_loss.item())
 
-                    test_fake_d = model_D(test_pred_img)
-                    test_real_d = model_D(test_real_img)
-                    test_d_real_loss = loss_fn_D(test_real_d, isreal=True)
-                    test_d_fake_loss = loss_fn_D(test_fake_d, isreal=False)
-                    test_d_loss = test_d_real_loss + test_d_fake_loss
+            # if step % opt.n_log_step == 0:
+            #     model_G.eval()
+            #     model_D.eval()
+            #     test_d_losses = []
+            #     test_d_real_losses = []
+            #     test_d_fake_losses = []
+            #     test_g_losses = []
+            #     for test_latent, test_real_img in test_loader:
+            #         test_latent = test_latent.to(device)
+            #         test_real_img = test_real_img.to(device)
+            #         test_pred_img = model_G(test_latent)
+            #         test_fake_g = model_D(test_pred_img)
+            #         test_g_loss = loss_fn_G(test_fake_g)
 
-                    test_d_real_losses.append(test_d_real_loss.item())
-                    test_d_fake_losses.append(test_d_fake_loss.item())
-                    test_d_losses.append(test_d_loss.item())
+            #         test_g_losses.append(test_g_loss.item())
+
+            #         test_fake_d = model_D(test_pred_img)
+            #         test_real_d = model_D(test_real_img)
+            #         test_d_real_loss = loss_fn_D(test_real_d, isreal=True)
+            #         test_d_fake_loss = loss_fn_D(test_fake_d, isreal=False)
+            #         test_d_loss = test_d_real_loss + test_d_fake_loss
+
+            #         test_d_real_losses.append(test_d_real_loss.item())
+            #         test_d_fake_losses.append(test_d_fake_loss.item())
+            #         test_d_losses.append(test_d_loss.item())
                 
-                # record process
-                test_g_loss = sum(test_g_losses)/len(test_g_losses)
-                test_d_loss = sum(test_d_losses)/len(test_d_losses)
-                test_d_real_loss = sum(test_d_real_losses)/len(test_d_real_losses)
-                test_d_fake_loss = sum(test_d_fake_losses)/len(test_d_fake_losses)
+            #     # record process
+            #     test_g_loss = sum(test_g_losses)/len(test_g_losses)
+            #     test_d_loss = sum(test_d_losses)/len(test_d_losses)
+            #     test_d_real_loss = sum(test_d_real_losses)/len(test_d_real_losses)
+            #     test_d_fake_loss = sum(test_d_fake_losses)/len(test_d_fake_losses)
 
 
-                train_writer.add_scalar("loss/g_loss", loss_g.item(), step)
-                train_writer.add_scalar("loss/d_loss", loss_d.item(), step)
-                train_writer.add_scalar("loss/d_real_loss", loss_d_real.item(), step)
-                train_writer.add_scalar("loss/d_fake_loss", loss_d_fake.item(), step)
-                train_writer.add_scalar("loss/epoch", epoch_num, step)
+            #     train_writer.add_scalar("loss/g_loss", loss_g.item(), step)
+            #     train_writer.add_scalar("loss/d_loss", loss_d.item(), step)
+            #     train_writer.add_scalar("loss/d_real_loss", loss_d_real.item(), step)
+            #     train_writer.add_scalar("loss/d_fake_loss", loss_d_fake.item(), step)
+            #     train_writer.add_scalar("loss/epoch", epoch_num, step)
 
-                test_writer.add_scalar("loss/g_loss", test_g_loss, step)
-                test_writer.add_scalar("loss/d_loss", test_d_loss, step)
-                test_writer.add_scalar("loss/d_real_loss", test_d_real_loss, step)
-                test_writer.add_scalar("real/d_fake_loss", test_d_fake_loss, step)
+            #     test_writer.add_scalar("loss/g_loss", test_g_loss, step)
+            #     test_writer.add_scalar("loss/d_loss", test_d_loss, step)
+            #     test_writer.add_scalar("loss/d_real_loss", test_d_real_loss, step)
+            #     test_writer.add_scalar("real/d_fake_loss", test_d_fake_loss, step)
 
                 # ----- eval -----
                 
-                latents = torch.randn(size=(9, opt.latent_size, 1, 1))
-                pred_img = model_G(latents)
-                grid_img = make_grid(pred_img, nrow=3, padding=0)
-                grid_img = grid_img.mul(0.5).add_(0.5)
+                # latents = torch.randn(size=(25, opt.latent_size, 1, 1))
+                # pred_img = model_G(latents)
+                # grid_img = make_grid(pred_img, nrow=3, padding=0)
+                # grid_img = grid_img.mul(0.5).add_(0.5)
 
-                train_writer.add_image("transition/{}".format(stage), grid_img, step)
+                # train_writer.add_image("transition/{}".format(stage), grid_img, step)
                 
                 model_G.train()
                 model_D.train()
