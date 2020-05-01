@@ -89,8 +89,8 @@ def main(opt):
     model_D.train()
     model_G.train()
 
-    loss_fn_G = BLoss(mode="g", device=device)
-    loss_fn_D = BLoss(mode="d", device=device)
+    loss_fn_G = HingeLoss(mode="g", device=device)
+    loss_fn_D = HingeLoss(mode="d", device=device)
 
     optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0001)
     optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0001)
