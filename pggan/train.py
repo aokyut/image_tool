@@ -9,6 +9,7 @@ from torchvision import transforms
 from torchvision.utils import make_grid, save_image
 from torch.utils.tensorboard import SummaryWriter
 import torch
+import torch.nn.functional as F
 
 import argparse
 import os
@@ -197,7 +198,8 @@ def main(opt):
                     
                     latents = torch.randn(size=(9, opt.latent_size, 1, 1))
                     pred_img = model_G(latents)
-                    save_image(pred_img, os.path.join(opt.result_dir,"{}.png".format(str(step))), nrow=3)
+                    pred_img_resize = F.interpolate(pred_img, size=(opt.resolution, opt.resolution, mode="nearest"))
+                    save_image(pred_img_resize, os.path.join(opt.result_dir,"{}.png".format(str(step))), nrow=3)
                     # grid_img = make_grid(pred_img, nrow=3, padding=0)
                     # grid_img = grid_img.mul(0.5).add_(0.5)
 
