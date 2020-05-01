@@ -16,8 +16,8 @@ class G_first_block(nn.Module):
                                     kernel_size=3,
                                     padding=1,
                                     stride=1)
-        self.activation1 = nn.LeakyReLU()
-        self.activation2 = nn.LeakyReLU()
+        self.activation1 = nn.LeakyReLU(0.2)
+        self.activation2 = nn.LeakyReLU(0.2)
         self.upsample = upsample
 
     def forward(self, x):
@@ -41,8 +41,8 @@ class G_block(nn.Module):
         padding_pix = kernel // 2
         self.conv1 = nn.Conv2d(in_ch, out_ch, kernel_size=kernel, padding=padding_pix)
         self.conv2 = nn.Conv2d(out_ch, out_ch, kernel_size=kernel, padding=padding_pix)
-        self.activation1 = nn.LeakyReLU()
-        self.activation2 = nn.LeakyReLU()
+        self.activation1 = nn.LeakyReLU(0.2)
+        self.activation2 = nn.LeakyReLU(0.2)
 
         self.upsample = upsample
 
@@ -151,9 +151,9 @@ class D_final_block(nn.Module):
             nn.Conv2d(in_ch + 1, in_ch, kernel_size=3, padding=1, stride=1),
 
             nn.Conv2d(in_ch, in_ch, kernel_size=3, padding=1, stride=1),
-            nn.LeakyReLU(),
+            nn.LeakyReLU(0.2),
             nn.Conv2d(in_ch, in_ch, kernel_size=4, padding=0, stride=1),
-            nn.LeakyReLU(),
+            nn.LeakyReLU(0.2),
             nn.Conv2d(in_ch, 1, kernel_size=1)
         )
     
@@ -172,9 +172,9 @@ class D_block(nn.Module):
         super().__init__()
         self.net = nn.Sequential(
             nn.Conv2d(in_ch, in_ch, kernel_size=kernel, padding=1),
-            nn.LeakyReLU(),
+            nn.LeakyReLU(0.2),
             nn.Conv2d(in_ch, out_ch, kernel_size=kernel, padding=1),
-            nn.LeakyReLU()
+            nn.LeakyReLU(0.2)
         )
     
     def forward(self, x):
