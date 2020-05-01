@@ -31,8 +31,9 @@ def main(opt):
     resolution_list = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
     train_dataset = Scalable_Dataset(root=opt.dataset_dir, datamode="train",
                                      transform=transforms.Compose([transforms.RandomHorizontalFlip(0.5),
-                                                                   transforms.ToTensor()]))
-    test_dataset = Scalable_Dataset(root=opt.dataset_dir, datamode="test")
+                                                                   transforms.ToTensor()]),
+                                     latent_size=opt.latent_size)
+    test_dataset = Scalable_Dataset(root=opt.dataset_dir, datamode="test", latent_size=opt.latent_size)
 
     dataset_length = len(train_dataset)
 
