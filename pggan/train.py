@@ -236,7 +236,7 @@ def main(opt):
             try:
                 latent, real_img = next(iter_loader)
             except:
-                iter_loader = DataLoader(train_dataset, batch_size=batch_size_list[stage + 1])
+                iter_loader = iter(DataLoader(train_dataset, batch_size=batch_size_list[stage + 1]))
                 latent, real_img = next(iter_loader)
             
             latent = latent.to(device)
