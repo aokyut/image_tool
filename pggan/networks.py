@@ -51,9 +51,9 @@ class G_block(nn.Module):
         x = self.activation1(x)
         # pixel wise normalization
         x = x / torch.sqrt(torch.mean(torch.pow(x, 2)) + 1e-10)
-        # x = self.conv2(x)
-        # x = self.activation2(x)
-        # x = x / torch.sqrt(torch.mean(torch.pow(x, 2)) + 1e-10) 
+        x = self.conv2(x)
+        x = self.activation2(x)
+        x = x / torch.sqrt(torch.mean(torch.pow(x, 2)) + 1e-10) 
 
         if self.upsample is True:
             return F.interpolate(x, scale_factor=2)

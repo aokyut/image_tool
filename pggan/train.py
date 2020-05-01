@@ -233,7 +233,11 @@ def main(opt):
         transition_step = (opt.transition_iter // batch) + 1
         for i in tqdm(range(transition_step)):
             step += 1
-            latent, real_img = next(iter_loader)
+            try:
+                latent, real_img = next(iter_loader)
+            except:
+                iter_loader = DataLoader(train_dataset, batch_size=batch_size_list[stage + 1])
+                latent, real_img = next(iter_loader)
             
             latent = latent.to(device)
             real_img = real_img.to(device)
