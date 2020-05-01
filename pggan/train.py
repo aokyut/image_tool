@@ -92,8 +92,8 @@ def main(opt):
     loss_fn_G = HingeLoss(mode="g", device=device)
     loss_fn_D = HingeLoss(mode="d", device=device)
 
-    optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0001)
-    optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0001)
+    optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0002)
+    optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0002)
 
 
     print("Model resolution :",opt.resolution)
