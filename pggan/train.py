@@ -88,8 +88,8 @@ def main(opt):
     model_D.train()
     model_G.train()
 
-    loss_fn_G = BLoss(mode="g")
-    loss_fn_D = BLoss(mode="d")
+    loss_fn_G = BLoss(mode="g").to(device)
+    loss_fn_D = BLoss(mode="d").to(device)
 
     optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0002)
     optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0002)
