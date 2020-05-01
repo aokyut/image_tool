@@ -118,7 +118,7 @@ def main(opt):
             print("skip")
             continue
          # ----- Training Step -----
-        epochs = [10, 20, 20, 40, 100]
+        epochs = [10, 20, 40, 80, 160]
         for epoch in range(epochs[stage]):
             print("epoch :", epoch)
             epoch_num += 1
@@ -221,13 +221,14 @@ def main(opt):
             break
 
         # transition step
-        iter_loader = iter(train_loader)
         model_D.stand_growing_flag()
         model_G.stand_growing_flag()
 
         train_dataset.resolution = resolution_list[stage + 1]
         test_dataset.resolution = resolution_list[stage + 1]
         batch = batch_size_list[stage + 1]
+
+        iter_loader = DataLoader(tarin_dataset, batch_size=batch_size_list[stage + 1])
         transition_step = (opt.transition_iter // batch) + 1
         for i in tqdm(range(transition_step)):
             step += 1
