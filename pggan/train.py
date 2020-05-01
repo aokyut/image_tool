@@ -308,13 +308,13 @@ def main(opt):
 
                 # train_writer.add_image("transition/{}".format(stage), grid_img, step)
                 
-                model_G.train()
-                model_D.train()
+            #     model_G.train()
+            #     model_D.train()
 
-            if i % opt.n_display_step == 0:
-                print("mode : transition")
-                print("loss_g :", loss_g.item())
-                print("loss_d :", loss_d.item())
+            # if i % opt.n_display_step == 0:
+            #     print("mode : transition")
+            #     print("loss_g :", loss_g.item())
+            #     print("loss_d :", loss_d.item())
         
         if opt.save is True:
             save_dir = os.path.join(opt.checkpoints, opt.exper)
