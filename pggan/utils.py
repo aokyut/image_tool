@@ -63,18 +63,19 @@ class HingeLoss(torch.nn.Module):
             return -torch.mean(torch.min(-output_d - 1, zero_tensor))
 
 class BLoss(torch.nn.Module):
-    def __init__(self, mode):
+    def __init__(self, mode, device="cpu"):
         super().__init__()
         assert mode in ["g", "d"]
         self.mode = mode
         self.func = torch.nn.BCEWithLogitsLoss()
+        self.device = device
     
     def forward(self, output_d, isreal=True):
         if self.mode == "g":
-            return self.func(output_d, torch.ones(output_d.shape))
+            return self.func(output_d, torch.ones(output_d.shape,device=self.device))
         
         elif self.mode == "d":
             if isreal is True:
-                return self.func(output_d, torch.ones(output_d.shape))
+                return self.func(output_d, torch.ones(output_d.shape, device=self.device))
             else:
-                return self.func(output_d, torch.zeros(output_d.shape))
+                return self.func(output_d, torch.zeros(output_d.shape, device=self.device))
