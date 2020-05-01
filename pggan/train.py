@@ -42,7 +42,7 @@ def main(opt):
 
     # ----- DataLoader Setting -----
     batch_size_list = [512, 512, 256, 128, 64, 32, 16, 8, 3]
-    batch_size_list = [16, 16, 16, 16, 16]
+    batch_size_list = [64, 32, 32, 16, 16]
     train_loader = DataLoader(train_dataset, batch_size=batch_size_list[0], shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=4, shuffle=True)
     print("batch_size :",batch_size_list)
