@@ -92,8 +92,8 @@ def main(opt):
     loss_fn_G = BLoss(mode="g", device=device)
     loss_fn_D = BLoss(mode="d", device=device)
 
-    optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0002)
-    optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0002)
+    optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0001)
+    optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0001)
 
 
     print("Model resolution :",opt.resolution)
@@ -251,11 +251,13 @@ def main(opt):
 
             with torch.no_grad():
                 pred_img = model_G(latent)
+
             fake_d = model_D(pred_img)
             real_d = model_D(real_img)
             loss_d_real = loss_fn_D(real_d, isreal=True)
             loss_d_fake = loss_fn_D(fake_d, isreal=False)
             loss_d = loss_d_real + loss_d_fake
+
             optimizer_D.zero_grad()
             loss_d.backward()
             optimizer_D.step()
