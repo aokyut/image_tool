@@ -118,7 +118,7 @@ def main(opt):
             print("skip")
             continue
          # ----- Training Step -----
-        epochs = [10, 20, 40, 80, 160]
+        epochs = [10, 30, 40, 80, 160]
         for epoch in range(epochs[stage]):
             print("epoch :", epoch)
             epoch_num += 1
@@ -228,7 +228,7 @@ def main(opt):
         test_dataset.resolution = resolution_list[stage + 1]
         batch = batch_size_list[stage + 1]
 
-        iter_loader = DataLoader(train_dataset, batch_size=batch_size_list[stage + 1])
+        iter_loader = iter(DataLoader(train_dataset, batch_size=batch_size_list[stage + 1]))
         transition_step = (opt.transition_iter // batch) + 1
         for i in tqdm(range(transition_step)):
             step += 1
