@@ -158,6 +158,8 @@ def main(opt):
                     test_d_fake_losses = []
                     test_g_losses = []
                     for test_latent, test_real_img in test_loader:
+                        test_latent.to(device)
+                        test_real_img.to(device)
                         test_pred_img = model_G(test_latent)
                         test_fake_g = model_D(test_pred_img)
                         test_g_loss = loss_fn_G(test_fake_g)
@@ -212,7 +214,7 @@ def main(opt):
             latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
             pred_img = model_G(latents)
             pred_img_resize = F.interpolate(pred_img, size=(opt.resolution, opt.resolution), mode="nearest")
-            save_image(pred_img_resize.to("cpu"), os.path.join(opt.result_dir,"{}-{}.png".format(str(stage), str(epoch))), nrow=3)
+            save_image(pred_img_resize.to("cpu"), os.path.join(opt.result_dir,"{}-{}.png".format(str(stage), str(epoch))), nrow=5)
             
         
         if stage == stages - 1:
