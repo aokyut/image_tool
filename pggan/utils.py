@@ -56,7 +56,7 @@ class HingeLoss(torch.nn.Module):
         if self.mode == "g":
             return -torch.mean(output_d)
 
-        zero_tensor = torch.zeros(output_d.shape, device=device)
+        zero_tensor = torch.zeros(output_d.shape, device=self.device)
         
         if isreal is True:
             return -torch.mean(torch.min(output_d - 1, zero_tensor))
