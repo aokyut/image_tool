@@ -2,7 +2,7 @@ import sys
 sys.path.append("../modules")
 
 from networks import Pg_Generator, Pg_Discriminator
-from utils import Scalable_Dataset, HingeLoss, BLoss, LSLoss
+from utils import Scalable_Dataset, HingeLoss, BLoss, LSLoss, WLoss
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -17,6 +17,8 @@ from math import log2
 from tqdm import tqdm
 import numpy as np
 
+def lerp(a,b, alpha):
+    return a + (b - a) * alpha
 
 def main(opt):
     # ----- Device Setting -----
@@ -89,8 +91,9 @@ def main(opt):
     model_D.train()
     model_G.train()
 
-    loss_fn_G = LSLoss(mode="g", device=device)
-    loss_fn_D = LSLoss(mode="d", device=device)
+    loss_fn_G = WLoss(mode="g", device=device)
+    loss_fn_D = WLoss(mode="d", device=device)
+    loss_fn_GP = torch.nn.MSELoss()
 
     optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0002, betas=(0, 0.99))
     optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0002)
@@ -142,9 +145,22 @@ def main(opt):
                     pred_img = model_G(latent)
                 fake_d = model_D(pred_img)
                 real_d = model_D(real_img)
+
+
+
                 loss_fake_d = loss_fn_D(fake_d, isreal=False)
                 loss_real_d = loss_fn_D(real_d, isreal=True)
-                loss_D = loss_fake_d + loss_real_d
+
+                
+                # Calculating gradient penalty
+                mixing_rate = torch.randn(size=(len(fake_d), 1, 1, 1))
+                mixed_image = torch.tensor(lerp(pred_img, real_img, mixing_rate), requires_grad=True)
+                mixed_d = model_D(mixed_image)
+                mixed_d.backward()
+                abs_gradient = torch.abs(mixed_d.grad)
+                loss_d_gp = loss_fn_GP(abs_gradient, torch.ones(size=abs_gradient.shape))
+
+                loss_D = loss_fake_d + loss_real_d + opt.l_gp * loss_d_gp
 
                 optimizer_D.zero_grad()
                 loss_D.backward()
@@ -256,7 +272,16 @@ def main(opt):
             real_d = model_D(real_img)
             loss_d_real = loss_fn_D(real_d, isreal=True)
             loss_d_fake = loss_fn_D(fake_d, isreal=False)
-            loss_d = loss_d_real + loss_d_fake
+
+            # Calculating gradient penalty
+            mixing_rate = torch.randn(size=(len(fake_d), 1, 1, 1))
+            mixed_image = torch.tensor(lerp(pred_img, real_img, mixing_rate), requires_grad=True)
+            mixed_d = model_D(mixed_image)
+            mixed_d.backward()
+            abs_gradient = torch.abs(mixed_d.grad)
+            loss_d_gp = loss_fn_GP(abs_gradient, torch.ones(size=abs_gradient.shape))
+
+            loss_d = loss_d_real + loss_d_fake + opt.l_gp * loss_d_gp
 
             optimizer_D.zero_grad()
             loss_d.backward()
@@ -369,6 +394,8 @@ if __name__ == "__main__":
     parser.add_argument("--n_log_step", type=int, default=10)
     parser.add_argument("--n_display_step", type=int, default=10)
     parser.add_argument("--save", action="store_true", default=False) 
+
+    parser.add_argument("--l_gp", type=float, default=10, help="lambda of gradient penalty of discriminator")
 
     # resume
     parser.add_argument("--start_stage", type=int, default=1)
