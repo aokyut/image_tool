@@ -45,6 +45,9 @@ def main(opt):
     # ----- DataLoader Setting -----
     batch_size_list = [512, 512, 256, 128, 64, 32, 16, 8, 3]
     batch_size_list = [64, 32, 32, 16, 16]
+    if opt.device == "cpu":
+        batch_size_list = [16, 16, 8, 6, 4]
+
     train_loader = DataLoader(train_dataset, batch_size=batch_size_list[0], shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=4, shuffle=True)
     print("batch_size :",batch_size_list)
@@ -122,7 +125,7 @@ def main(opt):
             print("skip")
             continue
          # ----- Training Step -----
-        epochs = [20, 40, 80, 160, 320]
+        epochs = [40, 80, 160, 320, 640]
         for epoch in range(epochs[stage]):
             print("epoch :", epoch)
             epoch_num += 1
@@ -205,6 +208,7 @@ def main(opt):
                 #     train_writer.add_scalar("loss/d_loss", loss_D.item(), step)
                 #     train_writer.add_scalar("loss/d_real_loss", loss_real_d.item(), step)
                 #     train_writer.add_scalar("loss/d_fake_loss", loss_fake_d.item(), step)
+                #     train_writer.add_scalar("loss/d_gp_loss", loss_d_gp.item(), step)
                 #     train_writer.add_scalar("loss/epoch", epoch_num, step)
 
                 #     test_writer.add_scalar("loss/g_loss", test_g_loss, step)
@@ -212,11 +216,14 @@ def main(opt):
                 #     test_writer.add_scalar("loss/d_real_loss", test_d_real_loss, step)
                 #     test_writer.add_scalar("loss/d_fake_loss", test_d_fake_loss, step)
 
-                #     # ----- eval -----
-                #     # grid_img = make_grid(pred_img, nrow=3, padding=0)
-                #     # grid_img = grid_img.mul(0.5).add_(0.5)
 
-                #     # train_writer.add_image("train/{}/{}".format(stage, epoch), grid_img, step)
+                #     # ----- eval -----
+                #     latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
+                #     pred_img = model_G(latents) 
+                #     grid_img = make_grid(pred_img, nrow=5, padding=0)
+                #     grid_img = grid_img.mul(0.5).add_(0.5)
+
+                #     train_writer.add_image("train/{}/{}".format(stage, epoch), grid_img, step)
                     
                     
                 #     model_G.train()
@@ -232,7 +239,10 @@ def main(opt):
             latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
             pred_img = model_G(latents)
             pred_img_resize = F.interpolate(pred_img, size=(opt.resolution, opt.resolution), mode="nearest")
-            save_image(pred_img_resize.to("cpu"), os.path.join(opt.result_dir,"{}-{}.png".format(str(stage), str(epoch))), nrow=5)
+            save_dir_path = os.path.join(opt.result_dir, str(stage))
+            if not os.path.exists(save_dir_path):
+                os.makedirs(save_dir_path)
+            save_image(pred_img_resize.to("cpu"), os.path.join(save_dir_path,"{}.png".format(str(epoch))), nrow=5)
             
         
         if stage == stages - 1:
@@ -389,7 +399,7 @@ if __name__ == "__main__":
     parser.add_argument("--resolution", type=int, default=64, help="final resolution of model")
     parser.add_argument("--device", type=str, choices=["cpu", "gpu"], default="cpu")
     parser.add_argument("--latent_size", type=int, default=512)
-    parser.add_argument("--result_dir", default="hoge")
+    parser.add_argument("--result_dir", default="results")
 
     parser.add_argument("--epoch", type=int, default=5, help="epoch number in each stage")
     parser.add_argument("--transition_iter", type=int, default=8000, help="image number of transition step")
