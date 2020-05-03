@@ -44,7 +44,7 @@ def main(opt):
 
     # ----- DataLoader Setting -----
     batch_size_list = [512, 512, 256, 128, 64, 32, 16, 8, 3]
-    batch_size_list = [64, 32, 32, 16, 16]
+    batch_size_list = [64, 32, 32, 32, 32]
     if opt.device == "cpu":
         batch_size_list = [16, 16, 8, 6, 4]
 
@@ -164,11 +164,8 @@ def main(opt):
                 fake_d = model_D(pred_img)
                 real_d = model_D(real_img)
 
-
-
                 loss_fake_d = loss_fn_D(fake_d, isreal=False)
                 loss_real_d = loss_fn_D(real_d, isreal=True)
-
                 
                 # Calculating gradient penalty
                 mixing_rate = torch.randn(size=(len(fake_d), 1, 1, 1), device=device)
