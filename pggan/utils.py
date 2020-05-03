@@ -81,7 +81,7 @@ class BLoss(torch.nn.Module):
             else:
                 return self.func(output_d, torch.zeros(output_d.shape, device=self.device))
 
-class LSLoss(torch..nn.Module):
+class LSLoss(torch.nn.Module):
     def __init__(self, mode, device="cpu"):
         super().__init__()
         assert mode in ["g", "d"]
