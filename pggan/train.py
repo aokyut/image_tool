@@ -98,8 +98,8 @@ def main(opt):
     loss_fn_D = WLoss(mode="d", device=device)
     loss_fn_GP = torch.nn.MSELoss()
 
-    optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0002, betas=(0, 0.99))
-    optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0002)
+    optimizer_D = torch.optim.Adam(model_D.parameters(), lr=opt.lr, betas=(0, 0.99))
+    optimizer_G = torch.optim.Adam(model_G.parameters(), lr=opt.lr, betas=(0, 0.99))
 
 
     print("Model resolution :",opt.resolution)
@@ -408,6 +408,7 @@ if __name__ == "__main__":
     parser.add_argument("--n_display_step", type=int, default=10)
     parser.add_argument("--save", action="store_true", default=False) 
 
+    parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--l_gp", type=float, default=10, help="lambda of gradient penalty of discriminator")
 
     # resume
