@@ -287,6 +287,8 @@ def main(opt):
 
         iter_loader = iter(DataLoader(train_dataset, batch_size=batch_size_list[stage + 1]))
         transition_step = (opt.transition_iter[stage] // batch) + 1
+        model_D.transition_iter = opt.transition_iter[stage]
+        model_G.transition_iter = opt.transition_iter[stage]
 
         print("transition iter :", opt.transition_iter[stage])
         for i in tqdm(range(transition_step)):
