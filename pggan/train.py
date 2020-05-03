@@ -153,7 +153,7 @@ def main(opt):
 
                 
                 # Calculating gradient penalty
-                mixing_rate = torch.randn(size=(len(fake_d), 1, 1, 1))
+                mixing_rate = torch.randn(size=(len(fake_d), 1, 1, 1), device=device)
                 mixed_image = torch.tensor(lerp(pred_img.clone().detach(), real_img.clone().detach(), mixing_rate), requires_grad=True, device=device)
                 mixed_d = model_D(mixed_image)
                 mixed_d_mean = torch.mean(mixed_d)
@@ -275,7 +275,7 @@ def main(opt):
             loss_d_fake = loss_fn_D(fake_d, isreal=False)
 
             # Calculating gradient penalty
-            mixing_rate = torch.randn(size=(len(fake_d), 1, 1, 1))
+            mixing_rate = torch.randn(size=(len(fake_d), 1, 1, 1), device=device)
             mixed_image = torch.tensor(lerp(pred_img.clone().detach(), real_img.clone().detach(), mixing_rate), requires_grad=True, device=device)
             mixed_d = model_D(mixed_image)
             mixed_d_mean = torch.mean(mixed_d)
