@@ -45,6 +45,7 @@ def main(opt):
     # ----- DataLoader Setting -----
     batch_size_list = [512, 512, 256, 128, 64, 32, 16, 8, 3]
     batch_size_list = [64, 32, 32, 16, 16]
+    batch_size_list = [16, 8, 4, 2, 1]
     train_loader = DataLoader(train_dataset, batch_size=batch_size_list[0], shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=4, shuffle=True)
     print("batch_size :",batch_size_list)
@@ -154,10 +155,11 @@ def main(opt):
                 
                 # Calculating gradient penalty
                 mixing_rate = torch.randn(size=(len(fake_d), 1, 1, 1))
-                mixed_image = torch.tensor(lerp(pred_img, real_img, mixing_rate), requires_grad=True)
+                mixed_image = torch.tensor(lerp(pred_img.clone().detach, real_img.clone().detach(), mixing_rate), requires_grad=True)
                 mixed_d = model_D(mixed_image)
-                mixed_d.backward()
-                abs_gradient = torch.abs(mixed_d.grad)
+                mixed_d_mean = torch.mean(mixed_d)
+                mixed_d_mean.backward()
+                abs_gradient = torch.abs(mixed_image.grad)
                 loss_d_gp = loss_fn_GP(abs_gradient, torch.ones(size=abs_gradient.shape))
 
                 loss_D = loss_fake_d + loss_real_d + opt.l_gp * loss_d_gp
@@ -275,10 +277,12 @@ def main(opt):
 
             # Calculating gradient penalty
             mixing_rate = torch.randn(size=(len(fake_d), 1, 1, 1))
-            mixed_image = torch.tensor(lerp(pred_img, real_img, mixing_rate), requires_grad=True)
+            mixed_image = torch.tensor(lerp(pred_img.clone().detach(), real_img.clone().detach(), mixing_rate), requires_grad=True)
             mixed_d = model_D(mixed_image)
-            mixed_d.backward()
-            abs_gradient = torch.abs(mixed_d.grad)
+            mixed_d_mean = torch.mean(mixed_d)
+            mixed_d_mean.backward()
+
+            abs_gradient = torch.abs(mixed_image.grad)
             loss_d_gp = loss_fn_GP(abs_gradient, torch.ones(size=abs_gradient.shape))
 
             loss_d = loss_d_real + loss_d_fake + opt.l_gp * loss_d_gp
