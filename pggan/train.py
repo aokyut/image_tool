@@ -78,8 +78,13 @@ def main(opt):
 
         if str(opt.start_stage - 1) in model_num:
             model_path = os.path.join(opt.checkpoints, opt.exper)
-            model_g_path = os.path.join(model_path, "model_{}_G.pth".format(str(opt.start_stage - 1)))
-            model_d_path = os.path.join(model_path, "model_{}_D.pth".format(str(opt.start_stage - 1)))
+
+            if opt.start_transition is True:
+                model_g_path = os.path.join(model_path, "model_{}_G.pth".format(str(opt.start_stage - 1.5)))
+                model_d_path = os.path.join(model_path, "model_{}_D.pth".format(str(opt.start_stage - 1.5)))
+            else:
+                model_g_path = os.path.join(model_path, "model_{}_G.pth".format(str(opt.start_stage - 1)))
+                model_d_path = os.path.join(model_path, "model_{}_D.pth".format(str(opt.start_stage - 1)))
 
             model_G.load_state_dict(torch.load(model_g_path, map_location="cpu"))
             model_D.load_state_dict(torch.load(model_d_path, map_location="cpu"))
@@ -121,9 +126,6 @@ def main(opt):
         print("stage :",stage)
         print("resolution :", resolution_list[stage])
 
-        if stage + 1 < opt.start_stage:
-            print("skip")
-            continue
          # ----- Training Step -----
         if opt.epoch != [-1]:
             epochs = opt.epoch
@@ -132,8 +134,12 @@ def main(opt):
 
         print("epochs :", epochs)
         for epoch in range(epochs[stage]):
+            if stage + 1 < opt.start_stage:
+                break
+
             print("epoch :", epoch)
             epoch_num += 1
+            
             for latent, real_img in tqdm(train_loader):
                 step += 1
                 latent = latent.to(device)
@@ -252,6 +258,23 @@ def main(opt):
         
         if stage == stages - 1:
             break
+        
+        if opt.save is True:
+            save_dir = os.path.join(opt.checkpoints, opt.exper)
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
+
+            model_g_path = os.path.join(save_dir, "model_{}.5_G.pth".format(str(stage)))
+            model_d_path = os.path.join(save_dir, "model_{}.5_D.pth".format(str(stage)))
+            torch.save(model_D.state_dict(), model_d_path)
+            torch.save(model_G.state_dict(), model_g_path)
+
+        if stage + 2 < opt.start_stage:
+            continue
+
+        if opt.start_transition is False:
+            continue
+
 
         # transition step
         model_D.stand_growing_flag()
@@ -418,6 +441,7 @@ if __name__ == "__main__":
 
     # resume
     parser.add_argument("--start_stage", type=int, default=1)
+    parser.add_argument("--start_transition", action="store_true", default=False)
     
     opt = parser.parse_args()
 
