@@ -159,7 +159,7 @@ def main(opt):
                 mixed_d_mean = torch.mean(mixed_d)
                 mixed_d_mean.backward()
                 abs_gradient = torch.abs(mixed_image.grad)
-                loss_d_gp = loss_fn_GP(abs_gradient, torch.ones(size=abs_gradient.shape))
+                loss_d_gp = loss_fn_GP(abs_gradient, torch.ones(size=abs_gradient.shape, device=device))
 
                 loss_D = loss_fake_d + loss_real_d + opt.l_gp * loss_d_gp
 
@@ -282,7 +282,7 @@ def main(opt):
             mixed_d_mean.backward()
 
             abs_gradient = torch.abs(mixed_image.grad)
-            loss_d_gp = loss_fn_GP(abs_gradient, torch.ones(size=abs_gradient.shape))
+            loss_d_gp = loss_fn_GP(abs_gradient, torch.ones(size=abs_gradient.shape, device=device))
 
             loss_d = loss_d_real + loss_d_fake + opt.l_gp * loss_d_gp
 
