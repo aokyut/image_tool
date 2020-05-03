@@ -263,6 +263,8 @@ def main(opt):
 
         iter_loader = iter(DataLoader(train_dataset, batch_size=batch_size_list[stage + 1]))
         transition_step = (opt.transition_iter[stage] // batch) + 1
+
+        print("transition iter :", opt.transition_iter[stage])
         for i in tqdm(range(transition_step)):
             step += 1
             try:
