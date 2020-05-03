@@ -301,6 +301,7 @@ def main(opt):
             
             latent = latent.to(device)
             real_img = real_img.to(device)
+            print(real_img.shape)
 
             pred_img = model_G(latent)
             fake_g = model_D(pred_img)
