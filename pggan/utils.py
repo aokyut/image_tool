@@ -91,7 +91,7 @@ class LSLoss(torch.nn.Module):
     
     def forward(self, output_d, isreal=True):
         if self.mode == "g":
-            return self.func(ouptut_d, torch.ones(output_d.shape, device=self.device))
+            return self.func(output_d, torch.ones(output_d.shape, device=self.device))
         
         elif self.mode == "d":
             if isreal is True:
