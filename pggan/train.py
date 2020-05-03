@@ -125,7 +125,10 @@ def main(opt):
             print("skip")
             continue
          # ----- Training Step -----
-        epochs = [40, 80, 160, 320, 640]
+        if opt.epoch != [-1]:
+            epochs = opt.epoch
+        else:
+            epochs = [40, 80, 160, 320, 640]
         for epoch in range(epochs[stage]):
             print("epoch :", epoch)
             epoch_num += 1
@@ -401,7 +404,7 @@ if __name__ == "__main__":
     parser.add_argument("--latent_size", type=int, default=512)
     parser.add_argument("--result_dir", default="results")
 
-    parser.add_argument("--epoch", type=int, default=5, help="epoch number in each stage")
+    parser.add_argument("--epoch", type=int, nargs="*" ,default=-1, help="epoch number in each stage")
     parser.add_argument("--transition_iter", type=int, default=8000, help="image number of transition step")
 
     parser.add_argument("--n_log_step", type=int, default=10)
