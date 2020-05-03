@@ -258,7 +258,7 @@ def main(opt):
         
         if stage == stages - 1:
             break
-        
+
         if opt.save is True:
             save_dir = os.path.join(opt.checkpoints, opt.exper)
             if not os.path.exists(save_dir):
@@ -430,7 +430,7 @@ if __name__ == "__main__":
     parser.add_argument("--result_dir", default="results")
 
     parser.add_argument("--epoch", type=int, nargs="*" ,default=-1, help="epoch number in each stage")
-    parser.add_argument("--transition_iter", type=int, default=[8000, 16000, 32000, 64000], help="image number of transition step")
+    parser.add_argument("--transition_iter", type=int, nargs="*", default=[8000, 16000, 32000, 64000], help="image number of transition step")
 
     parser.add_argument("--n_log_step", type=int, default=10)
     parser.add_argument("--n_display_step", type=int, default=10)
