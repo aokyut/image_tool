@@ -61,14 +61,18 @@ def main(opt):
     print("log step :", opt.n_log_step)
 
     # ----- Net Work Setting -----
+    if opt.start_transition is True:
+        start_stage = opt.start_stage - 1
+    else:
+        start_stage = opt.start_stage
     latent_size = opt.latent_size
     model_D = Pg_Discriminator(resolution=opt.resolution,
                                transition_iter=opt.transition_iter,
-                               start_stage=opt.start_stage)
+                               start_stage=start_stage)
     model_G = Pg_Generator(resolution=opt.resolution,
                            transition_iter=opt.transition_iter,
                            latent_size=opt.latent_size,
-                           start_stage=opt.start_stage)
+                           start_stage=start_stage)
     
     # ----- Resume -----
     if opt.start_stage != 1:
