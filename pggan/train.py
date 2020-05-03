@@ -259,6 +259,10 @@ def main(opt):
         if stage == stages - 1:
             break
 
+        if stage + 2 < opt.start_stage:
+            continue
+
+
         if opt.save is True:
             save_dir = os.path.join(opt.checkpoints, opt.exper)
             if not os.path.exists(save_dir):
@@ -269,10 +273,7 @@ def main(opt):
             torch.save(model_D.state_dict(), model_d_path)
             torch.save(model_G.state_dict(), model_g_path)
 
-        if stage + 2 < opt.start_stage:
-            continue
-
-        if opt.start_transition is False and stage + 1 < opt.start_stage:
+        if opt.start_transition is False and stage + 2 ==  opt.start_stage:
             continue
 
 
