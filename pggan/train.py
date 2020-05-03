@@ -129,6 +129,8 @@ def main(opt):
             epochs = opt.epoch
         else:
             epochs = [40, 80, 160, 320, 640]
+
+        print("epochs :", epochs)
         for epoch in range(epochs[stage]):
             print("epoch :", epoch)
             epoch_num += 1
