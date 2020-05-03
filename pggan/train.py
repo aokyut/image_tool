@@ -272,7 +272,7 @@ def main(opt):
         if stage + 2 < opt.start_stage:
             continue
 
-        if opt.start_transition is False:
+        if opt.start_transition is False and stage + 1 < opt.start_stage:
             continue
 
 
