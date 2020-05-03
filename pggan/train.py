@@ -2,7 +2,7 @@ import sys
 sys.path.append("../modules")
 
 from networks import Pg_Generator, Pg_Discriminator
-from utils import Scalable_Dataset, HingeLoss, BLoss
+from utils import Scalable_Dataset, HingeLoss, BLoss, LSLoss
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -89,8 +89,8 @@ def main(opt):
     model_D.train()
     model_G.train()
 
-    loss_fn_G = HingeLoss(mode="g", device=device)
-    loss_fn_D = HingeLoss(mode="d", device=device)
+    loss_fn_G = LSLoss(mode="g", device=device)
+    loss_fn_D = LSLoss(mode="d", device=device)
 
     optimizer_D = torch.optim.Adam(model_D.parameters(), lr=0.0002, betas=(0, 0.99))
     optimizer_G = torch.optim.Adam(model_G.parameters(), lr=0.0002)

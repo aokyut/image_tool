@@ -80,3 +80,22 @@ class BLoss(torch.nn.Module):
                 return self.func(output_d, torch.ones(output_d.shape, device=self.device))
             else:
                 return self.func(output_d, torch.zeros(output_d.shape, device=self.device))
+
+class LSLoss(torch..nn.Module):
+    def __init__(self, mode, device="cpu"):
+        super().__init__()
+        assert mode in ["g", "d"]
+        self.mode = mode
+        self.func = torch.nn.MSELoss()
+        self.device = device
+    
+    def forward(self, output_d, isreal=True):
+        if self.mode = "g":
+            return self.func(ouptut_d, torch.ones(output_d.shape, device=self.device))
+        
+        elif self.mode = "d":
+            if isreal is True:
+                return self.func(output_d, torch.ones(output_d.shape, device=self.device))
+            else:
+                return self.func(output_d, torch.zeros(output_d.shape, device=self.device))
+                
