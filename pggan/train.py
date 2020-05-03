@@ -262,7 +262,7 @@ def main(opt):
         batch = batch_size_list[stage + 1]
 
         iter_loader = iter(DataLoader(train_dataset, batch_size=batch_size_list[stage + 1]))
-        transition_step = (opt.transition_iter // batch) + 1
+        transition_step = (opt.transition_iter[stage] // batch) + 1
         for i in tqdm(range(transition_step)):
             step += 1
             try:
@@ -304,8 +304,6 @@ def main(opt):
             optimizer_D.zero_grad()
             loss_d.backward()
             optimizer_D.step()
-
-
 
             # if step % opt.n_log_step == 0:
             #     model_G.eval()
@@ -407,7 +405,7 @@ if __name__ == "__main__":
     parser.add_argument("--result_dir", default="results")
 
     parser.add_argument("--epoch", type=int, nargs="*" ,default=-1, help="epoch number in each stage")
-    parser.add_argument("--transition_iter", type=int, default=8000, help="image number of transition step")
+    parser.add_argument("--transition_iter", type=int, default=[8000, 16000, 32000, 64000], help="image number of transition step")
 
     parser.add_argument("--n_log_step", type=int, default=10)
     parser.add_argument("--n_display_step", type=int, default=10)
