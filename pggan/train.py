@@ -380,7 +380,7 @@ def main(opt):
 
                 # ----- eval -----
                 
-                latents = torch.randn(size=(25, opt.latent_size, 1, 1))
+                latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
                 pred_img = model_G(latents)
                 grid_img = make_grid(pred_img, nrow=3, padding=0)
                 grid_img = grid_img.mul(0.5).add_(0.5)
