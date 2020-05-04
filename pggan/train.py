@@ -61,6 +61,8 @@ def main(opt):
     print("log step :", opt.n_log_step)
 
     # ----- Net Work Setting -----
+    latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
+
     if opt.start_transition is True:
         start_stage = opt.start_stage - 1
     else:
@@ -230,7 +232,6 @@ def main(opt):
 
 
                     # ----- eval -----
-                    latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
                     pred_img = model_G(latents) 
                     grid_img = make_grid(pred_img, nrow=5, padding=0)
                     grid_img = grid_img.mul(0.5).add_(0.5)
@@ -248,7 +249,6 @@ def main(opt):
                     print("loss_D :", loss_D.item())
             
             # epoch
-            latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
             pred_img = model_G(latents)
             pred_img_resize = F.interpolate(pred_img, size=(opt.resolution, opt.resolution), mode="nearest")
             save_dir_path = os.path.join(opt.result_dir, str(stage))
@@ -380,7 +380,6 @@ def main(opt):
 
                 # ----- eval -----
                 
-                latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
                 pred_img = model_G(latents)
                 grid_img = make_grid(pred_img, nrow=3, padding=0)
                 grid_img = grid_img.mul(0.5).add_(0.5)
