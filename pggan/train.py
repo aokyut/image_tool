@@ -44,7 +44,7 @@ def main(opt):
 
     # ----- DataLoader Setting -----
     batch_size_list = [512, 512, 256, 128, 64, 32, 16, 8, 3]
-    batch_size_list = [64, 32, 32, 32, 32]
+    batch_size_list = [64, 64, 32, 32, 32]
     if opt.device == "cpu":
         batch_size_list = [16, 16, 8, 6, 4]
 
