@@ -3,16 +3,26 @@ import torch.nn as nn
 import torch.nn.functional as F
 from math import log2
 
+# ----- Custom layers -----
+class Equalized_Conv2d(nn.Module):
+    def __init__(self, in_ch, out_ch, kernel_size, padding, stride):
+        super().__init__()
+        self.conv2d = nn.Conv2d(in_ch, out_ch, kernel_size, padding, stride)
+        self.scale = torch.sqrt(2.0 / (in_ch * (kernel_size ** 2)))
+    
+    def forward(self, x):
+        return self.conv2d(x).mul(self.scale)
+
 # ----- Generator -----
 
 class G_first_block(nn.Module):
     def __init__(self, out_ch, latent_size = 512, upsample=False):
         super().__init__()
-        self.init_conv1 = nn.Conv2d(latent_size, out_ch,
+        self.init_conv1 = nn.Equalized_Conv2d(latent_size, out_ch,
                                     kernel_size=4,
                                     padding=3,
                                     stride=1)
-        self.init_conv2 = nn.Conv2d(out_ch, out_ch,
+        self.init_conv2 = nn.Equalized_Conv2d(out_ch, out_ch,
                                     kernel_size=3,
                                     padding=1,
                                     stride=1)
@@ -39,8 +49,8 @@ class G_block(nn.Module):
         super().__init__()
         assert kernel % 2 == 1, "kernel size must be odd number"
         padding_pix = kernel // 2
-        self.conv1 = nn.Conv2d(in_ch, out_ch, kernel_size=kernel, padding=padding_pix)
-        self.conv2 = nn.Conv2d(out_ch, out_ch, kernel_size=kernel, padding=padding_pix)
+        self.conv1 = nn.Equalized_Conv2d(in_ch, out_ch, kernel_size=kernel, padding=padding_pix)
+        self.conv2 = nn.Equalized_Conv2d(out_ch, out_ch, kernel_size=kernel, padding=padding_pix)
         self.activation1 = nn.LeakyReLU(0.2)
         self.activation2 = nn.LeakyReLU(0.2)
 
@@ -64,7 +74,7 @@ class G_block(nn.Module):
 class Torgb(nn.Module):
     def __init__(self, in_ch, out_ch=3):
         super().__init__()
-        self.net = nn.Conv2d(in_ch, out_ch, 1)
+        self.net = nn.Equalized_Conv2d(in_ch, out_ch, 1)
     def forward(self, x):
         return self.net(x)
 
@@ -147,13 +157,13 @@ class D_final_block(nn.Module):
     def __init__(self, in_ch):
         super().__init__()
         self.net = nn.Sequential(
-            nn.Conv2d(in_ch + 1, in_ch, kernel_size=3, padding=1, stride=1),
+            nn.Equalized_Conv2d(in_ch + 1, in_ch, kernel_size=3, padding=1, stride=1),
 
-            nn.Conv2d(in_ch, in_ch, kernel_size=3, padding=1, stride=1),
+            nn.Equalized_Conv2d(in_ch, in_ch, kernel_size=3, padding=1, stride=1),
             nn.LeakyReLU(0.2),
-            nn.Conv2d(in_ch, in_ch, kernel_size=4, padding=0, stride=1),
+            nn.Equalized_Conv2d(in_ch, in_ch, kernel_size=4, padding=0, stride=1),
             nn.LeakyReLU(0.2),
-            nn.Conv2d(in_ch, 1, kernel_size=1)
+            nn.Equalized_Conv2d(in_ch, 1, kernel_size=1)
         )
     
     def forward(self, x):
@@ -170,9 +180,9 @@ class D_block(nn.Module):
     def __init__(self, in_ch, out_ch, kernel=3):
         super().__init__()
         self.net = nn.Sequential(
-            nn.Conv2d(in_ch, in_ch, kernel_size=kernel, padding=1),
+            nn.Equalized_Conv2d(in_ch, in_ch, kernel_size=kernel, padding=1),
             nn.LeakyReLU(0.2),
-            nn.Conv2d(in_ch, out_ch, kernel_size=kernel, padding=1),
+            nn.Equalized_Conv2d(in_ch, out_ch, kernel_size=kernel, padding=1),
             nn.LeakyReLU(0.2)
         )
     
@@ -184,7 +194,7 @@ class D_block(nn.Module):
 class Fromrgb(nn.Module):
     def __init__(self, in_ch=3, out_ch=16):
         super().__init__()
-        self.net = nn.Conv2d(in_ch, out_ch, 1)
+        self.net = nn.Equalized_Conv2d(in_ch, out_ch, 1)
     def forward(self, x):
         return self.net(x)
 

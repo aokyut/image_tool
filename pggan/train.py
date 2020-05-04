@@ -241,11 +241,11 @@ def main(opt):
                 #     model_G.train()
                 #     model_D.train()
                 
-                # if step % opt.n_display_step == 0:
-                #     print("mode : training")
-                #     print("epoch :", epoch)
-                #     print("loss_G :", loss_G.item())
-                #     print("loss_D :", loss_D.item())
+                if step % opt.n_display_step == 0:
+                    print("mode : training")
+                    print("epoch :", epoch)
+                    print("loss_G :", loss_G.item())
+                    print("loss_D :", loss_D.item())
             
             # epoch
             latents = torch.randn(size=(25, opt.latent_size, 1, 1)).to(device)
@@ -390,10 +390,10 @@ def main(opt):
             #     model_G.train()
             #     model_D.train()
 
-            # if i % opt.n_display_step == 0:
-            #     print("mode : transition")
-            #     print("loss_g :", loss_g.item())
-            #     print("loss_d :", loss_d.item())
+            if i % opt.n_display_step == 0:
+                print("mode : transition")
+                print("loss_g :", loss_g.item())
+                print("loss_d :", loss_d.item())
         
         if opt.save is True:
             save_dir = os.path.join(opt.checkpoints, opt.exper)
