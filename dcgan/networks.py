@@ -1,5 +1,5 @@
 import torch
-from torch import nn, optim
+from torch import nn
 
 class Generator(nn.Module):
     def __init__(self, latent_size = 100):

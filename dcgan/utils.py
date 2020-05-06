@@ -28,4 +28,20 @@ class Dcgan_Dataset(Dataset):
         
         return latent, img
 
+class WLoss(torch.nn.Module):
+    def __init__(self, mode, device="cpu"):
+        super().__init__()
+        assert mode in ["g", "d"]
+        self.mode = mode
+        self.device = device
+
+    def forward(self, output_d, isreal=True):
+        if self.mode == "g":
+            return -torch.mean(output_d)
+        elif self.mode == "d":
+            if isreal is True:
+                return -torch.mean(output_d)
+            else:
+                return torch.mean(output_d)
+
 
