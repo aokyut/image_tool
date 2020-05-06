@@ -88,7 +88,7 @@ def main(opt):
     print("Latent size :",opt.latent_size)
 
     # ----- Training Loop -----
-    step = 0
+    step = opt.resume_epoch * opt.batch_size
     for epoch in tqdm(range(opt.resume_epoch, opt.resume_epoch + opt.epoch)):
         print("epoch :",epoch + 1,"/", opt.resume_epoch + opt.epoch)
 
