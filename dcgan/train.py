@@ -135,12 +135,12 @@ def main(opt):
             if step % opt.n_image_log == 0:
                 model_G.eval()
 
-                save_dir = os.path.join(opt.image_dir, str(epoch))
+                save_dir = opt.image_dir
 
                 if not os.path.exists(save_dir):
                     os.makedirs(save_dir)
                 save_path = os.path.join(save_dir, str(step) + ".png")
-                
+
                 pred_img = model_G(val_latents)
                 save_image(pred_img, save_path, nrow=5)
 
