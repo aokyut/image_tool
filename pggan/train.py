@@ -109,8 +109,8 @@ def main(opt):
     loss_fn_D = WLoss(mode="d", device=device)
     loss_fn_GP = torch.nn.MSELoss()
 
-    optimizer_D = torch.optim.Adam(model_D.parameters(), lr=opt.lr, betas=(0, 0.99))
-    optimizer_G = torch.optim.Adam(model_G.parameters(), lr=opt.lr, betas=(0, 0.99))
+    optimizer_D = torch.optim.Adam(model_D.parameters(), lr=opt.lr)
+    optimizer_G = torch.optim.Adam(model_G.parameters(), lr=opt.lr, betas=(0.0002, 0.5))
 
 
     print("Model resolution :",opt.resolution)
